@@ -78,7 +78,7 @@ using utils::nl;
 ;
 
 // Define tokens that have an associated value, such as identifiers or strings
-
+%token <int> INT "integer"
 %token <Symbol> ID "id"
 %token <Symbol> STRING "string"
 
