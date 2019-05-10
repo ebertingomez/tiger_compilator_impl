@@ -25,7 +25,7 @@ lineterminator  \r|\n|\r\n
 blank           [ \t\f]
 id              [a-zA-Z][_0-9a-zA-Z]*
 /* integer         ([^.]?)0([^.]?)|[1-9][0-9]* */
-integer         ([0-9]|[1-9][0-9]*)
+integer         0\b|[1-9][0-9]*  
 /* integer         0?[0-9]?[0-9]* */
 
 
