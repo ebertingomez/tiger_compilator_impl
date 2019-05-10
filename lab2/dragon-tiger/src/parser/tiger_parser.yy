@@ -118,9 +118,9 @@ using utils::nl;
 %left DIVIDE;
 %left UMINUS;
 %left LBRACE;
-%right RBRACE;
+%left RBRACE;
 %left LPAREN;
-%right RPAREN;
+%left RPAREN;
 
 // Declare grammar rules and production actions
 
