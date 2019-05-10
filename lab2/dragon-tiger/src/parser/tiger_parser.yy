@@ -117,10 +117,11 @@ using utils::nl;
 %left TIMES;
 %left DIVIDE;
 %left UMINUS;
-%left LPAREN;
-%right RPAREN;
 %left LBRACE;
 %right RBRACE;
+%left LPAREN;
+%right RPAREN;
+
 // Declare grammar rules and production actions
 
 %start program;
