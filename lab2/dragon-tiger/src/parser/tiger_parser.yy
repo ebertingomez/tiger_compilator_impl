@@ -116,9 +116,9 @@ using utils::nl;
 %left MINUS;
 %left TIMES;
 %left DIVIDE;
+%left UMINUS;
 %left LPAREN;
 %right RPAREN;
-%left UMINUS;
 
 // Declare grammar rules and production actions
 
