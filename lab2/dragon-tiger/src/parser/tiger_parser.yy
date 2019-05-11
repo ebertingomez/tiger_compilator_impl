@@ -109,6 +109,8 @@ using utils::nl;
 %left GT LT GE LE;
 %left PLUS MINUS;
 %left TIMES DIVIDE;
+%left LPAREN;
+%right RPAREN;
 %left UMINUS;
 
 // Declare grammar rules and production actions
