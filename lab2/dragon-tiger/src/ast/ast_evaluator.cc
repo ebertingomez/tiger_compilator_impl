@@ -14,26 +14,26 @@ void ASTEvaluator::visit(const StringLiteral &literal) {
 void ASTEvaluator::visit(const BinaryOperator &binop) {
     int left = ((IntegerLiteral *)&binop.get_left())->value;
     int right = ((IntegerLiteral *)&binop.get_right())->value;
-    if (operator_name[binop.op]=="+") 
-        std::cout<<left + right;
+    if (operator_name[binop.op]=="+")
+        *ostream<<left + right;
     else if (operator_name[binop.op]=="-") 
-        std::cout<<left - right;
+        *ostream<<left - right;
     else if (operator_name[binop.op]=="*") 
-        std::cout<<left * right;
+        *ostream<<left * right;
     else if (operator_name[binop.op]=="/") 
-        std::cout<<left / right;
+        *ostream<<left / right;
     else if (operator_name[binop.op]=="=") 
-        std::cout<<((left == right)?"True":"False");
+        *ostream<<((left == right)?"True":"False");
     else if (operator_name[binop.op]=="<>") 
-        std::cout<<((left != right)?"True":"False");
+        *ostream<<((left != right)?"True":"False");
     else if (operator_name[binop.op]=="<") 
-        std::cout<<((left < right)?"True":"False");
+        *ostream<<((left < right)?"True":"False");
     else if (operator_name[binop.op]=="<=") 
-        std::cout<<((left <= right)?"True":"False");
+        *ostream<<((left <= right)?"True":"False");
     else if (operator_name[binop.op]==">") 
-        std::cout<<((left > right)?"True":"False");
+        *ostream<<((left > right)?"True":"False");
     else if (operator_name[binop.op]==">=") 
-        std::cout<<((left >= right)?"True":"False");
+        *ostream<<((left >= right)?"True":"False");
 }
 
 void ASTEvaluator::visit(const Sequence &seqExpr) {

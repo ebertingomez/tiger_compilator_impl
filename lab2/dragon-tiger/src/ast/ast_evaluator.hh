@@ -10,10 +10,16 @@ namespace ast {
 class ASTEvaluator : public ConstASTVisitor {
   std::ostream *ostream;
   bool verbose;
+  unsigned indent_level = 0;
 
 public:
   ASTEvaluator(std::ostream *_ostream, bool _verbose)
       : ostream(_ostream), verbose(_verbose) {}
+  void nl() {
+    *ostream << std::endl;
+    for (unsigned i = 0; i < indent_level; i++)
+      *ostream << "  ";
+  };
   void visit(const IntegerLiteral &) override ;
   void visit(const StringLiteral &) override ;
   void visit(const BinaryOperator &) override ;
