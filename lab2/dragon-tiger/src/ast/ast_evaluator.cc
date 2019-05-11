@@ -23,17 +23,17 @@ void ASTEvaluator::visit(const BinaryOperator &binop) {
     else if (operator_name[binop.op]=="/") 
         std::cout<<left / right;
     else if (operator_name[binop.op]=="=") 
-        std::cout<<((left == right)?1:0);
+        std::cout<<((left == right)?"True":"False");
     else if (operator_name[binop.op]=="<>") 
-        std::cout<<((left != right)?1:0);
+        std::cout<<((left != right)?"True":"False");
     else if (operator_name[binop.op]=="<") 
-        std::cout<<((left < right)?1:0);
+        std::cout<<((left < right)?"True":"False");
     else if (operator_name[binop.op]=="<=") 
-        std::cout<<((left <= right)?1:0);
+        std::cout<<((left <= right)?"True":"False");
     else if (operator_name[binop.op]==">") 
-        std::cout<<((left > right)?1:0);
+        std::cout<<((left > right)?"True":"False");
     else if (operator_name[binop.op]==">=") 
-        std::cout<<((left >= right)?1:0);
+        std::cout<<((left >= right)?"True":"False");
     else if (operator_name[binop.op]=="&") 
         std::cout<<left && right;
     else if (operator_name[binop.op]=="|") 
