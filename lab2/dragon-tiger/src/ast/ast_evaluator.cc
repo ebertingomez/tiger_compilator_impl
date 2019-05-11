@@ -34,6 +34,10 @@ void ASTEvaluator::visit(const BinaryOperator &binop) {
         *ostream<<((left > right)?1:0);
     else if (operator_name[binop.op]==">=") 
         *ostream<<((left >= right)?1:0);
+    else if (operator_name[binop.op]=="|") 
+        *ostream<<((left || right)?1:0);
+    else if (operator_name[binop.op]=="&") 
+        *ostream<<((left && right)?1:0);
 }
 
 void ASTEvaluator::visit(const Sequence &seqExpr) {
