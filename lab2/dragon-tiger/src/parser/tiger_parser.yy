@@ -104,8 +104,8 @@ using utils::nl;
 // Declare precedence rules
 
 %nonassoc FUNCTION VAR TYPE DO OF ASSIGN;
-%left AND;
 %left OR;
+%left AND;
 %left EQ NEQ GT LT GE LE;
 %left PLUS MINUS;
 %left TIMES DIVIDE;
