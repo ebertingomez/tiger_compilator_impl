@@ -34,10 +34,6 @@ void ASTEvaluator::visit(const BinaryOperator &binop) {
         std::cout<<((left > right)?"True":"False");
     else if (operator_name[binop.op]==">=") 
         std::cout<<((left >= right)?"True":"False");
-    else if (operator_name[binop.op]=="&") 
-        std::cout<<left && right;
-    else if (operator_name[binop.op]=="|") 
-        std::cout<<left || right;
 }
 
 void ASTEvaluator::visit(const Sequence &seqExpr) {
