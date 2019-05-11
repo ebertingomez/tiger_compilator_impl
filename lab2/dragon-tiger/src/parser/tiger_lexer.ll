@@ -24,7 +24,6 @@ static std::string string_buffer;
 lineterminator  \r|\n|\r\n
 blank           [ \t\f]
 id              [a-zA-Z][_0-9a-zA-Z]*
-/* integer         ([^.]?)0([^.]?)|[1-9][0-9]* */
 integer         0{1}|[1-9][0-9]*
 
 
@@ -75,6 +74,8 @@ integer         0{1}|[1-9][0-9]*
 
  /* Keywords */
 
+if       return yy::tiger_parser::make_IF(loc);
+then     return yy::tiger_parser::make_THEN(loc);
 else     return yy::tiger_parser::make_ELSE(loc);
 while    return yy::tiger_parser::make_WHILE(loc);
 for      return yy::tiger_parser::make_FOR(loc);
