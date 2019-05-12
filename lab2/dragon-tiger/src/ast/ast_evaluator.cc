@@ -45,12 +45,14 @@ int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
         const auto exprs = seqExpr.get_exprs();
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
         if (expr != exprs.cbegin())
-            return (*expr)->accept(*this);
+            if (*expr != (Expr *) NULL)
+                return (*expr)->accept(*this);
+            else utils::error("Invalid Sequence");
         }
     } else {
         utils::error("Empty sequence");
     }
-    return 0;
+    return -1;
 }
 
 int32_t ASTEvaluator::visit(const Let &let) {
