@@ -200,7 +200,7 @@ assignExpr: ID ASSIGN expr
 ;
 
 ifExpr: IF expr THEN expr ELSE expr   { $$ = new IfThenElse(@1, $2, $4, $6); }
-      | IF expr THEN expr             { $$ = new IfThenElse(@1, $2, $4, new Sequence(nl,(std::vector<Expr *>) NULL)); }
+      | IF expr THEN expr             { $$ = new IfThenElse(@1, $2, $4, new Sequence(nl,std::vector<Expr *>())); }
 ;
 
 whileExpr: WHILE expr DO expr { $$ = new WhileLoop(@1, $2, $4); }
