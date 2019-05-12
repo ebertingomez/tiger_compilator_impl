@@ -3,83 +3,94 @@
 
 namespace ast {
 
-void ASTEvaluator::visit(const IntegerLiteral &literal) {
-    *ostream << literal.value;
+int32_t ASTEvaluator::visit(const IntegerLiteral &literal) {
+    return literal.value;
 }
 
-void ASTEvaluator::visit(const StringLiteral &literal) {
+int32_t ASTEvaluator::visit(const StringLiteral &literal) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const BinaryOperator &binop) {
-    int left = ((IntegerLiteral *)&binop.get_left())->value;
-    int right = ((IntegerLiteral *)&binop.get_right())->value;
+int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
+
     if (operator_name[binop.op]=="+")
-        *ostream<<left + right;
+        return binop.get_left().accept(*this) + binop.get_right().accept(*this);
     else if (operator_name[binop.op]=="-") 
-        *ostream<<left - right;
-    else if (operator_name[binop.op]=="*") 
-        *ostream<<left * right;
+        return binop.get_left().accept(*this) - binop.get_right().accept(*this);
+    else if (operator_name[binop.op]=="*")
+        return binop.get_left().accept(*this) * binop.get_right().accept(*this);
     else if (operator_name[binop.op]=="/") 
-        *ostream<<left / right;
+        return binop.get_left().accept(*this) / binop.get_right().accept(*this);
     else if (operator_name[binop.op]=="=") 
-        *ostream<<((left == right)?1:0);
+        return ((binop.get_left().accept(*this) == binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]=="<>") 
-        *ostream<<((left != right)?1:0);
+        return ((binop.get_left().accept(*this) != binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]=="<") 
-        *ostream<<((left < right)?1:0);
+        return ((binop.get_left().accept(*this) < binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]=="<=") 
-        *ostream<<((left <= right)?1:0);
+        return ((binop.get_left().accept(*this) <= binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]==">") 
-        *ostream<<((left > right)?1:0);
+        return ((binop.get_left().accept(*this) > binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]==">=") 
-        *ostream<<((left >= right)?1:0);
+        return ((binop.get_left().accept(*this) >= binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]=="|") 
-        *ostream<<((left || right)?1:0);
+        return ((binop.get_left().accept(*this) || binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]=="&") 
-        *ostream<<((left && right)?1:0);
+        return ((binop.get_left().accept(*this) && binop.get_right().accept(*this))?1:0);
 }
 
-void ASTEvaluator::visit(const Sequence &seqExpr) {
+int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
+    return 0;
 }
 
-void ASTEvaluator::visit(const Let &let) {
+int32_t ASTEvaluator::visit(const Let &let) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const Identifier &id) {
+int32_t ASTEvaluator::visit(const Identifier &id) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const IfThenElse &ite) {
+int32_t ASTEvaluator::visit(const IfThenElse &ite) {
+    return 0;
 }
 
-void ASTEvaluator::visit(const VarDecl &decl) {
+int32_t ASTEvaluator::visit(const VarDecl &decl) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const FunDecl &decl) {
+int32_t ASTEvaluator::visit(const FunDecl &decl) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const FunCall &call) {
+int32_t ASTEvaluator::visit(const FunCall &call) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const WhileLoop &loop) {
+int32_t ASTEvaluator::visit(const WhileLoop &loop) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const ForLoop &loop) {
+int32_t ASTEvaluator::visit(const ForLoop &loop) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const Break &brk) {
+int32_t ASTEvaluator::visit(const Break &brk) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
-void ASTEvaluator::visit(const Assign &assign) {
+int32_t ASTEvaluator::visit(const Assign &assign) {
     utils::error("The expression could not be evaluated");
+    return 0;
 }
 
 } // namespace ast
