@@ -48,7 +48,9 @@ int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
                 utils::error("Early error in the sequence");
         }
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
-            if (expr != exprs.cbegin())
+            if (expr != exprs.cend())
+                (*expr)->accept(*this);
+            else
                 return (*expr)->accept(*this);
         }
     } else {
