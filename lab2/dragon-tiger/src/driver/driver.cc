@@ -58,6 +58,7 @@ int main(int argc, char **argv) {
   if (vm.count("eval")) {
     ast::ASTEvaluator eval(&std::cout, vm.count("verbose") > 0);
     parser_driver.result_ast->accept(eval);
+    std::cout << parser_driver.result_ast->accept(eval);
     eval.nl();
   }
 
