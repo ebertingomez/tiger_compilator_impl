@@ -69,7 +69,13 @@ int32_t ASTEvaluator::visit(const IfThenElse &ite) {
     if (ite.get_condition().accept(*this))
         return ite.get_then_part().accept(*this);
     else
-        return ite.get_else_part().accept(*this);
+        std::cout<<NULL<<std::endl;
+        if (1 == 1)
+            return ite.get_else_part().accept(*this);
+        else
+            utils::error("Empty Else");
+    return -1;
+
 }
 
 int32_t ASTEvaluator::visit(const VarDecl &decl) {
