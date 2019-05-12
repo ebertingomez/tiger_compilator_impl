@@ -44,10 +44,12 @@ int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
     if (seqExpr.get_exprs() != (std::vector<Expr *>) NULL) {
         const auto exprs = seqExpr.get_exprs();
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
-        if (expr != exprs.cbegin())
-            if (*expr != (Expr *) NULL)
+            if (*expr == NULL)
+                utils::error("Early error in the sequence");
+        }
+        for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+            if (expr != exprs.cbegin())
                 return (*expr)->accept(*this);
-            else utils::error("Invalid Sequence");
         }
     } else {
         utils::error("Empty sequence");
