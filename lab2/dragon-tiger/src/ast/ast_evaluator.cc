@@ -55,7 +55,11 @@ int32_t ASTEvaluator::visit(const Identifier &id) {
 }
 
 int32_t ASTEvaluator::visit(const IfThenElse &ite) {
-    return 0;
+    
+    if (ite.get_condition().accept(*this))
+        return ite.get_then_part().accept(*this);
+    else
+        return ite.get_else_part().accept(*this);
 }
 
 int32_t ASTEvaluator::visit(const VarDecl &decl) {
