@@ -41,7 +41,7 @@ int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
 }
 
 int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
-    if (seqExpr.get_exprs() != (std::vector<Expr *>) NULL) {
+    if (seqExpr.get_exprs().size() > 0) {
         const auto exprs = seqExpr.get_exprs();
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
             if (*expr == NULL)
@@ -70,11 +70,14 @@ int32_t ASTEvaluator::visit(const Identifier &id) {
 int32_t ASTEvaluator::visit(const IfThenElse &ite) {
     if (ite.get_condition().accept(*this))
         return ite.get_then_part().accept(*this);
-    else
-        if (1 == 1)
+    else {
+        const Expr * expr = &ite.get_else_part();
+        Sequence * seq = (Sequence *)expr;
+        if (seq->get_exprs().size() > 0)
             return ite.get_else_part().accept(*this);
         else
             utils::error("Empty Else");
+    }
     return -1;
 
 }
