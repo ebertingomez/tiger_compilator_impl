@@ -71,7 +71,6 @@ int32_t ASTEvaluator::visit(const IfThenElse &ite) {
     if (ite.get_condition().accept(*this))
         return ite.get_then_part().accept(*this);
     else
-        std::cout<<NULL<<std::endl;
         if (1 == 1)
             return ite.get_else_part().accept(*this);
         else
