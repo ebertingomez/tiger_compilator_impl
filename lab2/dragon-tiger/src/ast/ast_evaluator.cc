@@ -47,16 +47,16 @@ int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
             if (*expr == NULL)
                 utils::error("Early error in the sequence");
         }
+        Expr * e;
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
-            if (expr != exprs.cend())
-                (*expr)->accept(*this);
-            else
-                return (*expr)->accept(*this);
+            (*expr)->accept(*this);
+            e = *expr;      
         }
+        return e->accept(*this);
     } else {
         utils::error("Empty sequence");
     }
-    return -1;
+    return -7;
 }
 
 int32_t ASTEvaluator::visit(const Let &let) {
