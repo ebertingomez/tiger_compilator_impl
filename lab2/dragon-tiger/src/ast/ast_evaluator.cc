@@ -56,7 +56,7 @@ int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
     } else {
         utils::error("Empty sequence");
     }
-    return -7;
+    return 0;
 }
 
 int32_t ASTEvaluator::visit(const Let &let) {
@@ -78,7 +78,7 @@ int32_t ASTEvaluator::visit(const IfThenElse &ite) {
         if (seq->get_exprs().size() > 0)
             return ite.get_else_part().accept(*this);
         else
-            utils::error("Empty Else");
+            utils::error("Empty else");
     }
     return -1;
 
