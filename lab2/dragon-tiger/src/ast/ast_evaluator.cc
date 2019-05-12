@@ -13,7 +13,6 @@ int32_t ASTEvaluator::visit(const StringLiteral &literal) {
 }
 
 int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
-
     if (operator_name[binop.op]=="+")
         return binop.get_left().accept(*this) + binop.get_right().accept(*this);
     else if (operator_name[binop.op]=="-") 
@@ -38,9 +37,19 @@ int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
         return ((binop.get_left().accept(*this) || binop.get_right().accept(*this))?1:0);
     else if (operator_name[binop.op]=="&") 
         return ((binop.get_left().accept(*this) && binop.get_right().accept(*this))?1:0);
+    return 0;
 }
 
 int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
+    if (seqExpr.get_exprs() != (std::vector<Expr *>) NULL) {
+        const auto exprs = seqExpr.get_exprs();
+        for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+        if (expr != exprs.cbegin())
+            return (*expr)->accept(*this);
+        }
+    } else {
+        utils::error("Empty sequence");
+    }
     return 0;
 }
 
@@ -55,7 +64,6 @@ int32_t ASTEvaluator::visit(const Identifier &id) {
 }
 
 int32_t ASTEvaluator::visit(const IfThenElse &ite) {
-    
     if (ite.get_condition().accept(*this))
         return ite.get_then_part().accept(*this);
     else
