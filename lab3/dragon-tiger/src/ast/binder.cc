@@ -148,6 +148,9 @@ void Binder::visit(Identifier &id) {
 }
 
 void Binder::visit(IfThenElse &ite) {
+  ite.get_condition().accept(*this);
+  ite.get_then_part().accept(*this);
+  ite.get_else_part().accept(*this);
 }
 
 void Binder::visit(VarDecl &decl) {
