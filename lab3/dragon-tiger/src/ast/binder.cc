@@ -128,6 +128,17 @@ void Binder::visit(Sequence &seq) {
 }
 
 void Binder::visit(Let &let) {
+  push_scope();
+  for (auto decl : let.get_decls()) {
+    enter(*decl);
+  }
+  const auto exprs = let.get_sequence().get_exprs();
+  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+    if (expr != exprs.cbegin())
+      (*expr)->accept(*this);
+  }
+  pop_scope();
+
 }
 
 void Binder::visit(Identifier &id) {
