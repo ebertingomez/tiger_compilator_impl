@@ -162,7 +162,11 @@ void Binder::visit(VarDecl &decl) {
 void Binder::visit(FunDecl &decl) {
   set_parent_and_external_name(decl);
   functions.push_back(&decl);
-  /* ... put your code here ... */
+  auto params = decl.get_params();
+  for (auto param = params.cbegin(); param != params.cend(); param++) {
+    (*param)->accept(*this);
+  }
+  decl.get_expr()->accept(*this);
   functions.pop_back();
 }
 
