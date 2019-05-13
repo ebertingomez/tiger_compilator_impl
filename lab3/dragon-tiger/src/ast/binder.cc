@@ -134,6 +134,15 @@ void Binder::visit(Sequence &seq) {
 
 void Binder::visit(Let &let) {
   push_scope();
+  std::vector<Decl *> decls = let.get_decls();
+  for (auto decl1 : decls) {
+    std::vector<Decl *> decls2(decls);
+    decls2.erase(std::find(decls.begin(),decls.end(),decl1));
+    for (auto decl2 : decls2) {
+      if (decl1->name == decl2->name) 
+        error(decl1->name.get() + " is being declared twice in this scope");
+    }
+  }
   for (auto decl : let.get_decls()) {
     decl->accept(*this);
   }
