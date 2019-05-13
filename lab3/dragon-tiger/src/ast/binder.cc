@@ -121,9 +121,15 @@ void Binder::visit(StringLiteral &literal) {
 }
 
 void Binder::visit(BinaryOperator &op) {
+  op.get_left().accept(*this);
+  op.get_right().accept(*this);
 }
 
 void Binder::visit(Sequence &seq) {
+  const auto exprs = seq.get_exprs();
+  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+    (*expr)->accept(*this);
+  }
 }
 
 void Binder::visit(Let &let) {
@@ -138,7 +144,6 @@ void Binder::visit(Let &let) {
 
 void Binder::visit(Identifier &id) {
   VarDecl * decl = (VarDecl *) & find(id.loc, id.name);
-  std::cout<<decl->loc<<std::endl;
   id.set_decl(decl);
 }
 
@@ -147,8 +152,11 @@ void Binder::visit(IfThenElse &ite) {
 
 void Binder::visit(VarDecl &decl) {
   enter(decl);
-  if (decl.get_expr())
-  decl.get_expr();
+  Identifier * id  = new Identifier(decl.loc,decl.name);
+  id->accept(*this);
+  if (auto expr = decl.get_expr()) {
+    expr->accept(*this);
+  }
 }
 
 void Binder::visit(FunDecl &decl) {
