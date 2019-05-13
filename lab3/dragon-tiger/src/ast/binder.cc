@@ -114,7 +114,6 @@ FunDecl *Binder::analyze_program(Expr &root) {
   main->accept(*this);
   return main;
 }
-
 void Binder::visit(IntegerLiteral &literal) {
 }
 
@@ -130,24 +129,26 @@ void Binder::visit(Sequence &seq) {
 void Binder::visit(Let &let) {
   push_scope();
   for (auto decl : let.get_decls()) {
-    enter(*decl);
+    decl->accept(*this);
   }
-  const auto exprs = let.get_sequence().get_exprs();
-  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
-    if (expr != exprs.cbegin())
-      (*expr)->accept(*this);
-  }
+  let.get_sequence().accept(*this);
   pop_scope();
 
 }
 
 void Binder::visit(Identifier &id) {
+  VarDecl * decl = (VarDecl *) & find(id.loc, id.name);
+  std::cout<<decl->loc<<std::endl;
+  id.set_decl(decl);
 }
 
 void Binder::visit(IfThenElse &ite) {
 }
 
 void Binder::visit(VarDecl &decl) {
+  enter(decl);
+  if (decl.get_expr())
+  decl.get_expr();
 }
 
 void Binder::visit(FunDecl &decl) {
