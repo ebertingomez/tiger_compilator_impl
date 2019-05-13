@@ -151,6 +151,10 @@ void Binder::visit(IfThenElse &ite) {
 }
 
 void Binder::visit(VarDecl &decl) {
+  auto decl_entry = current_scope().find(decl.name);
+    if (decl_entry != current_scope().cend()) {
+      error(decl.loc, decl.name.get() + " is trying to be declared twice");
+    }
   enter(decl);
   Identifier * id  = new Identifier(decl.loc,decl.name);
   id->accept(*this);
