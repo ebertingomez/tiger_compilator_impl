@@ -179,9 +179,16 @@ void Binder::visit(FunCall &call) {
 }
 
 void Binder::visit(WhileLoop &loop) {
+  loop.get_condition().accept(*this);
+  loop.get_body().accept(*this);
 }
 
 void Binder::visit(ForLoop &loop) {
+  push_scope();
+  loop.get_variable().get_expr()->accept(*this);
+  loop.get_high().accept(*this);
+  loop.get_body().accept(*this);
+  pop_scope();
 }
 
 void Binder::visit(Break &b) {
