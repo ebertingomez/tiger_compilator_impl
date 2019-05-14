@@ -196,6 +196,8 @@ void Binder::visit(Break &b) {
 
 void Binder::visit(Assign &assign) {
   assign.get_lhs().accept(*this);
+  if (assign.get_lhs().get_decl()->get_escapes()==true)
+    error(assign.get_lhs().get_decl()->loc, assign.get_lhs().get_decl()->name.get() + " is trying to be assigned but is a loop a var");
   assign.get_rhs().accept(*this);
 }
 
