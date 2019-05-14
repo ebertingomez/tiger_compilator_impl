@@ -186,7 +186,6 @@ void Binder::visit(WhileLoop &loop) {
 void Binder::visit(ForLoop &loop) {
   push_scope();
   loop.get_variable().accept(*this);
-  enter(loop.get_variable());
   loop.get_high().accept(*this);
   loop.get_body().accept(*this);
   pop_scope();
