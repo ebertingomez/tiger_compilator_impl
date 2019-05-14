@@ -187,7 +187,7 @@ void Binder::visit(WhileLoop &loop) {
 void Binder::visit(ForLoop &loop) {
   push_scope();
   loop.get_variable().accept(*this);
-  loop.get_variable().set_escapes();
+  //loop.get_variable().set_escapes();
   loop.get_high().accept(*this);
   loop.get_body().accept(*this);
   pop_scope();
@@ -198,8 +198,8 @@ void Binder::visit(Break &b) {
 
 void Binder::visit(Assign &assign) {
   assign.get_lhs().accept(*this);
-  //if (assign.get_lhs().get_decl()->get_escapes()==true)
-  //  error(assign.get_lhs().get_decl()->loc, assign.get_lhs().get_decl()->name.get() + " is trying to be assigned but is a loop var");
+  if (assign.get_lhs().get_decl()->get_escapes()==true)
+    error(assign.get_lhs().get_decl()->loc, assign.get_lhs().get_decl()->name.get() + " is trying to be assigned but is a loop var");
   assign.get_rhs().accept(*this);
 }
 
