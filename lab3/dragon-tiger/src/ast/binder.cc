@@ -157,6 +157,7 @@ void Binder::visit(VarDecl &decl) {
     if (decl_entry != current_scope().cend()) {
       error(decl.loc, decl.name.get() + " is trying to be declared twice");
     }
+    
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
