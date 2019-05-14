@@ -154,14 +154,14 @@ void Binder::visit(IfThenElse &ite) {
 
 void Binder::visit(VarDecl &decl) {
   auto decl_entry = current_scope().find(decl.name);
-    if (decl_entry != current_scope().cend()) {
-      error(decl.loc, decl.name.get() + " is trying to be declared twice");
-    }
-  if (decl.get_escapes()==true)
-    error(decl.loc, decl.name.get() + " is trying to be assigned but is a loop var");
+  if (decl_entry != current_scope().cend()) {
+    error(decl.loc, decl.name.get() + " is trying to be declared twice");
+  }
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
+  if (decl.get_escapes()==true)
+    error(decl.loc, decl.name.get() + " is trying to be assigned but is a loop var");
   enter(decl);
 }
 
@@ -198,8 +198,8 @@ void Binder::visit(Break &b) {
 
 void Binder::visit(Assign &assign) {
   assign.get_lhs().accept(*this);
-  if (assign.get_lhs().get_decl()->get_escapes()==true)
-    error(assign.get_lhs().get_decl()->loc, assign.get_lhs().get_decl()->name.get() + " is trying to be assigned but is a loop var");
+  //if (assign.get_lhs().get_decl()->get_escapes()==true)
+  //  error(assign.get_lhs().get_decl()->loc, assign.get_lhs().get_decl()->name.get() + " is trying to be assigned but is a loop var");
   assign.get_rhs().accept(*this);
 }
 
