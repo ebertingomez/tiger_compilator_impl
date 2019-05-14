@@ -195,6 +195,8 @@ void Binder::visit(Break &b) {
 }
 
 void Binder::visit(Assign &assign) {
+  assign.get_lhs().accept(*this);
+  assign.get_rhs().accept(*this);
 }
 
 } // namespace binder
