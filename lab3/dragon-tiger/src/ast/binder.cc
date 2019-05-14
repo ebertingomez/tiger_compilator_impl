@@ -189,6 +189,7 @@ void Binder::visit(ForLoop &loop) {
   loop.get_high().accept(*this);
   loop.get_body().accept(*this);
   pop_scope();
+  loop.get_variable().accept(*this);
 }
 
 void Binder::visit(Break &b) {
