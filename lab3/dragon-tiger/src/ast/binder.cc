@@ -157,8 +157,6 @@ void Binder::visit(VarDecl &decl) {
     if (decl_entry != current_scope().cend()) {
       error(decl.loc, decl.name.get() + " is trying to be declared twice");
     }
-  if (decl.get_escapes()==true)
-    error(decl.loc, decl.name.get() + " is trying to be assigned but is a loop var");
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
