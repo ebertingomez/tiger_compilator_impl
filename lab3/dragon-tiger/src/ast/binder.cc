@@ -194,7 +194,7 @@ void Binder::visit(VarDecl &decl) {
     expr->accept(*this);
   }
   int depth = static_cast<int>(scopes.size());
-  //decl.set_depth(depth);
+  decl.set_depth(depth);
   enter(decl);
 }
 
