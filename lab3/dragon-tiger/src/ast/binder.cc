@@ -142,11 +142,16 @@ void Binder::visit(Let &let) {
       enter(*func_decl);
     } 
     else {
-      for (auto func_decl : decls){
-        func_decl->accept(*this);
+      while (!decls.empty()){
+        decls.back()->accept(*this);
+        decls.pop_back();
       }
       decl->accept(*this);
     }
+  }
+  while (!decls.empty()){
+    decls.back()->accept(*this);
+    decls.pop_back();
   }
   let.get_sequence().accept(*this);
   pop_scope();
