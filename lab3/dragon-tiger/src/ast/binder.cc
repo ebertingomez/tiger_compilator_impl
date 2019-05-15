@@ -168,8 +168,8 @@ void Binder::visit(Identifier &id) {
     error(id.loc, id.name.get() + " is not a function call");
   id.set_decl(decl);
   id.set_depth(static_cast<int>(scopes.size()));
-  //if (id.get_depth() - decl->get_depth() > 0)
-  //  decl->set_escapes();
+  if (id.get_depth() - decl->get_depth() > 0)
+    decl->set_escapes();
 }
 
 void Binder::visit(IfThenElse &ite) {
@@ -186,7 +186,7 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  decl.set_depth(static_cast<int>(scopes.size()));
+  //decl.set_depth(static_cast<int>(scopes.size()));
   enter(decl);
 }
 
