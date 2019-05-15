@@ -136,7 +136,7 @@ void Binder::visit(Let &let) {
   push_scope();
   for (auto decl : let.get_decls()) {
     if  (dynamic_cast<FunDecl *>(decl) != nullptr)
-      {std::cout<<"OK"<<std::endl;enter(*decl);}
+      enter(*decl);
   }
   for (auto decl : let.get_decls()) {
     decl->accept(*this);
