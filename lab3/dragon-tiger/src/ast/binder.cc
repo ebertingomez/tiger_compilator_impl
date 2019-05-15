@@ -135,6 +135,9 @@ void Binder::visit(Sequence &seq) {
 void Binder::visit(Let &let) {
   push_scope();
   for (auto decl : let.get_decls()) {
+    std::cout<<((VarDecl * )decl)->type_name.get()<<std::endl;
+  }
+  for (auto decl : let.get_decls()) {
     decl->accept(*this);
   }
   let.get_sequence().accept(*this);
@@ -168,11 +171,17 @@ void Binder::visit(VarDecl &decl) {
 void Binder::visit(FunDecl &decl) {
   set_parent_and_external_name(decl);
   functions.push_back(&decl);
+
+  push_scope();
+  /* Parameters declaration */
   auto params = decl.get_params();
   for (auto param = params.cbegin(); param != params.cend(); param++) {
     (*param)->accept(*this);
   }
+  /* Body definition */
   decl.get_expr()->accept(*this);
+  pop_scope();
+
   functions.pop_back();
 }
 
