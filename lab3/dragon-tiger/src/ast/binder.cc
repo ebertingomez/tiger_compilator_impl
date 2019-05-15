@@ -186,7 +186,7 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  //decl.set_depth(static_cast<int>(scopes.size()));
+  decl.set_depth(static_cast<int>(scopes.size()));
   enter(decl);
 }
 
