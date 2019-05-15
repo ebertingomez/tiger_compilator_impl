@@ -195,7 +195,7 @@ void Binder::visit(VarDecl &decl) {
   }
   int depth = static_cast<int>(scopes.size());
   std::cout<<decl.name.get()<<" "<<--depth<<std::endl;
-  decl.set_depth(depth);
+  decl.set_depth(2);
   enter(decl);
 }
 
