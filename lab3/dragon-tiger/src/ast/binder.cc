@@ -233,6 +233,7 @@ void Binder::visit(ForLoop &loop) {
 }
 
 void Binder::visit(Break &b) {
+  b.get_loop();
 }
 
 void Binder::visit(Assign &assign) {
