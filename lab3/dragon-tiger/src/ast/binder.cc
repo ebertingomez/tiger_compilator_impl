@@ -164,7 +164,7 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  if (decl.get_escapes()==true)
+  if (decl.read_only)
     error(decl.loc, decl.name.get() + " is trying to be assigned but is a loop var");
   enter(decl);
 }
