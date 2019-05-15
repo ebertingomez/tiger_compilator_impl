@@ -134,12 +134,19 @@ void Binder::visit(Sequence &seq) {
 
 void Binder::visit(Let &let) {
   push_scope();
+  std::vector<FunDecl *> decls;
   for (auto decl : let.get_decls()) {
-    if  (dynamic_cast<FunDecl *>(decl) != nullptr)
-      enter(*decl);
-  }
-  for (auto decl : let.get_decls()) {
-    decl->accept(*this);
+    FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
+    if  (func_decl != nullptr){
+      decls.push_back(func_decl);
+      enter(*func_decl);
+    } 
+    else {
+      for (auto func_decl : decls){
+        func_decl->accept(*this);
+      }
+      decl->accept(*this);
+    }
   }
   let.get_sequence().accept(*this);
   pop_scope();
