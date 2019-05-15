@@ -169,7 +169,9 @@ void Binder::visit(Let &let) {
 }
 
 void Binder::visit(Identifier &id) {
-  VarDecl * decl = (VarDecl *) & find(id.loc, id.name);
+  VarDecl * decl = dynamic_cast<VarDecl *>(& find(id.loc, id.name));
+  if (decl == nullptr)
+    error(id.loc, id.name.get() + " is not a function call");
   id.set_decl(decl);
 }
 
@@ -208,7 +210,9 @@ void Binder::visit(FunDecl &decl) {
 }
 
 void Binder::visit(FunCall &call) {
-  FunDecl * decl = (FunDecl *) & find(call.loc, call.func_name);
+  FunDecl * decl = dynamic_cast<FunDecl *>(& find(call.loc, call.func_name));
+  if (decl == nullptr)
+    error(call.loc, call.func_name.get() + " is not a function call");
   call.set_decl(decl);
   auto args = call.get_args();
   for (auto arg = args.cbegin(); arg != args.cend(); arg++) {
