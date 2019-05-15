@@ -135,9 +135,10 @@ void Binder::visit(Sequence &seq) {
 void Binder::visit(Let &let) {
   push_scope();
   for (auto decl : let.get_decls()) {
-    if  (dynamic_cast<FunDecl *>(decl) != nullptr)
+    if  (dynamic_cast<FunDecl *>(decl) != nullptr){
       ((FunDecl *)decl)->set_external_name(decl->name);
       enter(*decl);
+    }
   }
   for (auto decl : let.get_decls()) {
     decl->accept(*this);
