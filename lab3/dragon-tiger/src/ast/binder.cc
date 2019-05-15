@@ -151,6 +151,7 @@ void Binder::visit(Let &let) {
       pop_scope();
       decls.push_back(func_decl);
       int depth = static_cast<int>(scopes.size());
+      std::cout<<func_decl->name.get()<<" "<<func_decl->get_depth()<<std::endl;
       //func_decl->set_depth(depth);
       enter(*func_decl);
     } 
@@ -176,6 +177,7 @@ void Binder::visit(Identifier &id) {
     error(id.loc, id.name.get() + " is not a function call");
   id.set_decl(decl);
   int depth = static_cast<int>(scopes.size());
+  std::cout<<id.name.get()<<" "<<id.get_depth()<<std::endl;
   //id.set_depth(depth);
 }
 
@@ -193,9 +195,8 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  int depth = static_cast<int>(scopes.size());
-  std::cout<<decl.name.get()<<" "<<--depth<<std::endl;
-  decl.set_depth(2);
+  std::cout<<decl.name.get()<<" "<<decl.get_depth()<<std::endl;
+  //decl.set_depth(2);
   enter(decl);
 }
 
@@ -226,6 +227,7 @@ void Binder::visit(FunCall &call) {
   }
   call.set_decl(decl);
   int depth = static_cast<int>(scopes.size());
+  std::cout<<call.func_name.get()<<" "<<call.get_depth()<<std::endl;
   //call.set_depth(depth);
 }
 
