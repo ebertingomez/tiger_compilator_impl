@@ -177,6 +177,13 @@ void Binder::visit(FunDecl &decl) {
 }
 
 void Binder::visit(FunCall &call) {
+  //call.func_name;
+  //auto decl = call.get_decl())
+
+  auto args = call.get_args();
+  for (auto arg = args.cbegin(); arg != args.cend(); arg++) {
+    (*arg)->accept(*this);
+  }
 }
 
 void Binder::visit(WhileLoop &loop) {
