@@ -142,16 +142,8 @@ void Binder::visit(Let &let) {
       if (decl_entry != current_scope().cend()) {
         error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
       }
-      push_scope();
-      //enter(*func_decl);
-      //auto params = func_decl->get_params();
-      //for (auto param = params.cbegin(); param != params.cend(); param++) {
-      //  (*param)->accept(*this);
-      //}
-      pop_scope();
       decls.push_back(func_decl);
-      int depth = static_cast<int>(scopes.size());
-      //func_decl->set_depth(depth);
+      func_decl->set_depth(static_cast<int>(scopes.size()));
       enter(*func_decl);
     } 
     else {
@@ -175,8 +167,7 @@ void Binder::visit(Identifier &id) {
   if (decl == nullptr)
     error(id.loc, id.name.get() + " is not a function call");
   id.set_decl(decl);
-  int depth = static_cast<int>(scopes.size());
-  //id.set_depth(depth);
+  id.set_depth(static_cast<int>(scopes.size()));
 }
 
 void Binder::visit(IfThenElse &ite) {
@@ -193,7 +184,7 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  //decl.set_depth(2);
+  decl.set_depth(static_cast<int>(scopes.size()));
   enter(decl);
 }
 
@@ -223,8 +214,7 @@ void Binder::visit(FunCall &call) {
     (*arg)->accept(*this);
   }
   call.set_decl(decl);
-  int depth = static_cast<int>(scopes.size());
-  //call.set_depth(depth);
+  call.set_depth(static_cast<int>(scopes.size()));
 }
 
 void Binder::visit(WhileLoop &loop) {
