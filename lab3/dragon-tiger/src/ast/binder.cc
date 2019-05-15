@@ -143,11 +143,11 @@ void Binder::visit(Let &let) {
         error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
       }
       push_scope();
-      enter(*func_decl);
-      auto params = func_decl->get_params();
-      for (auto param = params.cbegin(); param != params.cend(); param++) {
-        (*param)->accept(*this);
-      }
+      //enter(*func_decl);
+      //auto params = func_decl->get_params();
+      //for (auto param = params.cbegin(); param != params.cend(); param++) {
+      //  (*param)->accept(*this);
+      //}
       pop_scope();
       decls.push_back(func_decl);
       int depth = static_cast<int>(scopes.size());
