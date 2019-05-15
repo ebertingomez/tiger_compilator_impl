@@ -150,6 +150,7 @@ void Binder::visit(Let &let) {
       }
       pop_scope();
       decls.push_back(func_decl);
+      func_decl->set_depth(scopes.size());
       enter(*func_decl);
     } 
     else {
@@ -173,6 +174,7 @@ void Binder::visit(Identifier &id) {
   if (decl == nullptr)
     error(id.loc, id.name.get() + " is not a function call");
   id.set_decl(decl);
+  id.set_depth(scopes.size());
 }
 
 void Binder::visit(IfThenElse &ite) {
@@ -189,6 +191,7 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
+  decl.set_depth(scopes.size());
   enter(decl);
 }
 
@@ -213,11 +216,12 @@ void Binder::visit(FunCall &call) {
   FunDecl * decl = dynamic_cast<FunDecl *>(& find(call.loc, call.func_name));
   if (decl == nullptr)
     error(call.loc, call.func_name.get() + " is not a function call");
-  call.set_decl(decl);
   auto args = call.get_args();
   for (auto arg = args.cbegin(); arg != args.cend(); arg++) {
     (*arg)->accept(*this);
   }
+  call.set_decl(decl);
+  call.set_depth(scopes.size());
 }
 
 void Binder::visit(WhileLoop &loop) {
