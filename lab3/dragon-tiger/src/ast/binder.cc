@@ -139,6 +139,10 @@ void Binder::visit(Let &let) {
     FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
     if  (func_decl != nullptr){
       decls.push_back(func_decl);
+      auto decl_entry = current_scope().find(func_decl->name);
+      if (decl_entry != current_scope().cend()) {
+        error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
+      }
       enter(*func_decl);
     } 
     else {
