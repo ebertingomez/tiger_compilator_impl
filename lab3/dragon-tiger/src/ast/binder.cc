@@ -221,6 +221,13 @@ void Binder::visit(FunCall &call) {
 
 void Binder::visit(WhileLoop &loop) {
   loop.get_condition().accept(*this);
+  
+  const auto exprs = ((Sequence * )&loop.get_body())->get_exprs();
+  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+    Break * b = dynamic_cast<Break *>(*expr);
+    if (b != nullptr)
+      b->set_loop(&loop);
+  }
   loop.get_body().accept(*this);
 }
 
@@ -228,12 +235,20 @@ void Binder::visit(ForLoop &loop) {
   push_scope();
   loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
+
+  const auto exprs = ((Sequence * )&loop.get_body())->get_exprs();
+  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+    Break * b = dynamic_cast<Break *>(*expr);
+    if (b != nullptr)
+      b->set_loop(&loop);
+  }
   loop.get_body().accept(*this);
   pop_scope();
 }
 
 void Binder::visit(Break &b) {
-  b.get_loop();
+  if (b.get_loop().get_ptr() == nullptr)
+    error(b.loc, " a break is outside a loop");
 }
 
 void Binder::visit(Assign &assign) {
