@@ -137,6 +137,8 @@ void Binder::visit(Sequence &seq) {
 }
 
 void Binder::visit(Let &let) {
+  bool was_loop = is_loop_body;
+  is_loop_body = false;
   push_scope();
   std::vector<FunDecl *> decls;
   for (auto decl : let.get_decls()) {
@@ -164,6 +166,7 @@ void Binder::visit(Let &let) {
   }
   let.get_sequence().accept(*this);
   pop_scope();
+  is_loop_body = was_loop;
 }
 
 void Binder::visit(Identifier &id) {
