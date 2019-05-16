@@ -7,6 +7,10 @@
 using utils::error;
 using utils::non_fatal_error;
 
+/* Variables to handle loop break */
+static std::vector<Loop *> loops; 
+static bool is_loop_body=false;
+
 namespace ast {
 namespace binder {
 
@@ -220,44 +224,34 @@ void Binder::visit(FunCall &call) {
 }
 
 void Binder::visit(WhileLoop &loop) {
+  bool was_loop = is_loop_body;
+  is_loop_body = false;
   loop.get_condition().accept(*this);
-  
-  Sequence * s = dynamic_cast<Sequence *>(&loop.get_body());
-  if (s != nullptr){
-    auto exprs = s->get_exprs();
-    for (auto expr : exprs) {
-      Break * b = dynamic_cast<Break *>(expr);
-      if (b != nullptr)
-        b->set_loop(&loop);
-    }
-  }
-  
+  is_loop_body = true;
+  loops.push_back(&loop);
   loop.get_body().accept(*this);
+  is_loop_body = was_loop;
+  loops.pop_back();
 }
 
 void Binder::visit(ForLoop &loop) {
   push_scope();
+  bool was_loop = is_loop_body;
+  is_loop_body = false;
   loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
-
-  Sequence * s = dynamic_cast<Sequence *>(&loop.get_body());
-  if (s != nullptr){
-    auto exprs = s->get_exprs();
-    for (auto expr : exprs) {
-      Break * b = dynamic_cast<Break *>(expr);
-      if (b != nullptr)
-        b->set_loop(&loop);
-    }
-  }
-  
-  
+  is_loop_body = true;
+  loops.push_back(&loop);
   loop.get_body().accept(*this);
+  is_loop_body = was_loop;
+  loops.pop_back();
   pop_scope();
 }
 
 void Binder::visit(Break &b) {
-  //if (!b.get_loop())
+  if (!is_loop_body)
     error(b.loc, " There is a break outside a loop");
+  b.set_loop(loops.back());
 }
 
 void Binder::visit(Assign &assign) {
