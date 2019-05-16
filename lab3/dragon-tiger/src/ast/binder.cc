@@ -242,6 +242,7 @@ void Binder::visit(ForLoop &loop) {
     if (b != nullptr)
       b->set_loop(&loop);
   }
+  
   loop.get_body().accept(*this);
   pop_scope();
 }
