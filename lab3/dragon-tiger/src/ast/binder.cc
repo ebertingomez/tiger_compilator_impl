@@ -248,7 +248,7 @@ void Binder::visit(ForLoop &loop) {
 
 void Binder::visit(Break &b) {
   if (b.get_loop().get_ptr() == nullptr)
-    error(b.loc, " a break is outside a loop");
+    error(b.loc, " there is a break outside a loop");
 }
 
 void Binder::visit(Assign &assign) {
