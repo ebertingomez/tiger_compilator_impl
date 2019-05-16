@@ -222,12 +222,12 @@ void Binder::visit(FunCall &call) {
 void Binder::visit(WhileLoop &loop) {
   loop.get_condition().accept(*this);
   
-  const auto exprs = ((Sequence * )&loop.get_body())->get_exprs();
-  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
-    Break * b = dynamic_cast<Break *>(*expr);
-    if (b != nullptr)
-      b->set_loop(&loop);
-  }
+  //const auto exprs = ((Sequence * )&loop.get_body())->get_exprs();
+  //for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
+  //  Break * b = dynamic_cast<Break *>(*expr);
+  //  if (b != nullptr)
+  //    b->set_loop(&loop);
+  //}
   loop.get_body().accept(*this);
 }
 
