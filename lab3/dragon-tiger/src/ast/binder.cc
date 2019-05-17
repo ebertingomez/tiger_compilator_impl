@@ -131,8 +131,8 @@ void Binder::visit(BinaryOperator &op) {
 
 void Binder::visit(Sequence &seq) {
   const auto exprs = seq.get_exprs();
-  for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
-    (*expr)->accept(*this);
+  for (auto expr : exprs) {
+    (expr)->accept(*this);
   }
 }
 
