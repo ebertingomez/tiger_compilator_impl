@@ -239,7 +239,7 @@ void Binder::visit(WhileLoop &loop) {
 }
 
 void Binder::visit(ForLoop &loop) {
-  //push_scope();
+  push_scope();
   bool was_loop = is_loop_body;
   is_loop_body = false;
   loop.get_variable().accept(*this);
@@ -249,7 +249,7 @@ void Binder::visit(ForLoop &loop) {
   loop.get_body().accept(*this);
   is_loop_body = was_loop;
   loops.pop_back();
-  //pop_scope();
+  pop_scope();
 }
 
 void Binder::visit(Break &b) {
@@ -259,9 +259,9 @@ void Binder::visit(Break &b) {
 }
 
 void Binder::visit(Assign &assign) {
-  assign.get_lhs().accept(*this);
   if (assign.get_lhs().get_decl()->read_only)
     error(assign.get_lhs().get_decl()->loc, assign.get_lhs().get_decl()->name.get() + " is trying to be assigned but is a loop var");
+  assign.get_lhs().accept(*this);
   assign.get_rhs().accept(*this);
 }
 
