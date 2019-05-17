@@ -142,28 +142,28 @@ void Binder::visit(Let &let) {
   push_scope();
   std::vector<FunDecl *> decls;
   for (auto decl : let.get_decls()) {
-    FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
-    if  (func_decl != nullptr){
-      auto decl_entry = current_scope().find(func_decl->name);
-      if (decl_entry != current_scope().cend()) {
-        error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
-      }
-      decls.push_back(func_decl);
-      func_decl->set_depth(scopes.size()-2);
-      enter(*func_decl);
-    } 
-    else {
-      while (!decls.empty()){
-        decls.back()->accept(*this);
-        decls.pop_back();
-      }
+    // FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
+    // if  (func_decl != nullptr){
+    //   auto decl_entry = current_scope().find(func_decl->name);
+    //   if (decl_entry != current_scope().cend()) {
+    //     error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
+    //   }
+    //   decls.push_back(func_decl);
+    //   func_decl->set_depth(scopes.size()-2);
+    //   enter(*func_decl);
+    // } 
+    // else {
+    //   while (!decls.empty()){
+    //     decls.back()->accept(*this);
+    //     decls.pop_back();
+    //   }
       decl->accept(*this);
-    }
+    //}
   }
-  while (!decls.empty()){
-    decls.back()->accept(*this);
-    decls.pop_back();
-  }
+  // while (!decls.empty()){
+  //   decls.back()->accept(*this);
+  //   decls.pop_back();
+  // }
   let.get_sequence().accept(*this);
   pop_scope();
   is_loop_body = was_loop;
