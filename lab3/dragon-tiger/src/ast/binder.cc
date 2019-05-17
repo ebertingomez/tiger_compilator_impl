@@ -239,7 +239,7 @@ void Binder::visit(WhileLoop &loop) {
 }
 
 void Binder::visit(ForLoop &loop) {
-  push_scope();
+  //push_scope();
   bool was_loop = is_loop_body;
   is_loop_body = false;
   loop.get_variable().accept(*this);
@@ -249,7 +249,7 @@ void Binder::visit(ForLoop &loop) {
   loop.get_body().accept(*this);
   is_loop_body = was_loop;
   loops.pop_back();
-  pop_scope();
+  //pop_scope();
 }
 
 void Binder::visit(Break &b) {
