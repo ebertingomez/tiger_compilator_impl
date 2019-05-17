@@ -144,12 +144,8 @@ void Binder::visit(Let &let) {
   for (auto decl : let.get_decls()) {
     FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
     if  (func_decl != nullptr){
-      // auto decl_entry = current_scope().find(func_decl->name);
-      // if (decl_entry != current_scope().cend()) {
-      //   error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
-      // }
       decls.push_back(func_decl);
-      func_decl->set_depth(scopes.size()-2);
+      func_decl->set_depth(scopes.size()-1);
       enter(*func_decl);
     } 
     else {
@@ -174,7 +170,7 @@ void Binder::visit(Identifier &id) {
   if (decl == nullptr)
     error(id.loc, id.name.get() + " is not a variable");
   id.set_decl(decl);
-  id.set_depth(scopes.size()-2);
+  id.set_depth(scopes.size()-1);
   if (id.get_depth() - decl->get_depth() > 0)
     decl->set_escapes();
 }
@@ -186,14 +182,10 @@ void Binder::visit(IfThenElse &ite) {
 }
 
 void Binder::visit(VarDecl &decl) {
-  // auto decl_entry = current_scope().find(decl.name);
-  // if (decl_entry != current_scope().cend()) {
-  //   error(decl.loc, decl.name.get() + " is trying to be declared twice");
-  // }
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  decl.set_depth(scopes.size()-2);
+  decl.set_depth(scopes.size()-1);
   enter(decl);
 }
 
@@ -228,7 +220,7 @@ void Binder::visit(FunCall &call) {
     arg->accept(*this);
   }
   call.set_decl(decl);
-  call.set_depth(scopes.size()-2);
+  call.set_depth(scopes.size()-1);
 }
 
 void Binder::visit(WhileLoop &loop) {
