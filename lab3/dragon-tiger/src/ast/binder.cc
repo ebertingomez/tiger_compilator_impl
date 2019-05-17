@@ -175,7 +175,7 @@ void Binder::visit(Identifier &id) {
     error(id.loc, id.name.get() + " is not a variable");
   id.set_decl(decl);
   id.set_depth(scopes.size());
-  if (id.get_depth() - decl->get_depth() > 0)
+  if (id.get_depth() - decl->get_depth() != 0)
     decl->set_escapes();
 }
 
@@ -219,6 +219,7 @@ void Binder::visit(FunCall &call) {
     error(call.loc, call.func_name.get() + " is not a function call");
   if (call.get_args().size() != decl->get_params().size())
     error(call.loc, call.func_name.get() + " : number of arguments does not match");
+  
   for (auto arg : call.get_args()) {
     arg->accept(*this);
   }
