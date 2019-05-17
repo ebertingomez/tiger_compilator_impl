@@ -172,7 +172,7 @@ void Binder::visit(Let &let) {
 void Binder::visit(Identifier &id) {
   VarDecl * decl = dynamic_cast<VarDecl *>(& find(id.loc, id.name));
   if (decl == nullptr)
-    error(id.loc, id.name.get() + " is not a function call");
+    error(id.loc, id.name.get() + " is not a variable");
   id.set_decl(decl);
   id.set_depth(scopes.size());
   if (id.get_depth() - decl->get_depth() > 0)
@@ -217,9 +217,10 @@ void Binder::visit(FunCall &call) {
   FunDecl * decl = dynamic_cast<FunDecl *>(& find(call.loc, call.func_name));
   if (decl == nullptr)
     error(call.loc, call.func_name.get() + " is not a function call");
-  auto args = call.get_args();
-  for (auto arg = args.cbegin(); arg != args.cend(); arg++) {
-    (*arg)->accept(*this);
+  if (call.get_args().size() != decl->get_params().size())
+    error(call.loc, call.func_name.get() + " : number of arguments does not match");
+  for (auto arg : call.get_args()) {
+    arg->accept(*this);
   }
   call.set_decl(decl);
   call.set_depth(scopes.size());
@@ -229,8 +230,8 @@ void Binder::visit(WhileLoop &loop) {
   bool was_loop = is_loop_body;
   is_loop_body = false;
   loop.get_condition().accept(*this);
-  is_loop_body = true;
   loops.push_back(&loop);
+  is_loop_body = true;
   loop.get_body().accept(*this);
   is_loop_body = was_loop;
   loops.pop_back();
