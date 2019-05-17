@@ -247,12 +247,14 @@ void Binder::visit(ForLoop &loop) {
   is_loop_body = false;
   push_scope();
   loop.get_variable().accept(*this);
+  push_scope();
   loop.get_high().accept(*this);
   is_loop_body = true;
   loops.push_back(&loop);
   loop.get_body().accept(*this);
   is_loop_body = was_loop;
   loops.pop_back();
+  pop_scope();
   pop_scope();
 }
 
