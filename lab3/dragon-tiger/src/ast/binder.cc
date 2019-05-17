@@ -132,7 +132,7 @@ void Binder::visit(BinaryOperator &op) {
 void Binder::visit(Sequence &seq) {
   const auto exprs = seq.get_exprs();
   for (auto expr : exprs) {
-    (expr)->accept(*this);
+    expr->accept(*this);
   }
 }
 
@@ -144,10 +144,10 @@ void Binder::visit(Let &let) {
   for (auto decl : let.get_decls()) {
     FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
     if  (func_decl != nullptr){
-      auto decl_entry = current_scope().find(func_decl->name);
-      if (decl_entry != current_scope().cend()) {
-        error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
-      }
+      // auto decl_entry = current_scope().find(func_decl->name);
+      // if (decl_entry != current_scope().cend()) {
+      //   error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
+      // }
       decls.push_back(func_decl);
       func_decl->set_depth(scopes.size()-2);
       enter(*func_decl);
@@ -186,10 +186,10 @@ void Binder::visit(IfThenElse &ite) {
 }
 
 void Binder::visit(VarDecl &decl) {
-  auto decl_entry = current_scope().find(decl.name);
-  if (decl_entry != current_scope().cend()) {
-    error(decl.loc, decl.name.get() + " is trying to be declared twice");
-  }
+  // auto decl_entry = current_scope().find(decl.name);
+  // if (decl_entry != current_scope().cend()) {
+  //   error(decl.loc, decl.name.get() + " is trying to be declared twice");
+  // }
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
