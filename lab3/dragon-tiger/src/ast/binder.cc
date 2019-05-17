@@ -132,11 +132,7 @@ void Binder::visit(BinaryOperator &op) {
 void Binder::visit(Sequence &seq) {
   const auto exprs = seq.get_exprs();
   for (auto expr : exprs) {
-<<<<<<< HEAD
-    (expr)->accept(*this);
-=======
     expr->accept(*this);
->>>>>>> lab3
   }
 }
 
@@ -148,17 +144,8 @@ void Binder::visit(Let &let) {
   for (auto decl : let.get_decls()) {
     FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
     if  (func_decl != nullptr){
-<<<<<<< HEAD
-      auto decl_entry = current_scope().find(func_decl->name);
-      if (decl_entry != current_scope().cend()) {
-        error(func_decl->loc, func_decl->name.get() + " is trying to be declared twice");
-      }
-      decls.push_back(func_decl);
-      func_decl->set_depth(scopes.size()-2);
-=======
       decls.push_back(func_decl);
       func_decl->set_depth(functions.size()-1);
->>>>>>> lab3
       enter(*func_decl);
     } 
     else {
@@ -183,11 +170,7 @@ void Binder::visit(Identifier &id) {
   if (decl == nullptr)
     error(id.loc, id.name.get() + " is not a variable");
   id.set_decl(decl);
-<<<<<<< HEAD
-  id.set_depth(scopes.size()-2);
-=======
   id.set_depth(functions.size()-1);
->>>>>>> lab3
   if (id.get_depth() - decl->get_depth() > 0)
     decl->set_escapes();
 }
@@ -199,21 +182,10 @@ void Binder::visit(IfThenElse &ite) {
 }
 
 void Binder::visit(VarDecl &decl) {
-<<<<<<< HEAD
-  auto decl_entry = current_scope().find(decl.name);
-  if (decl_entry != current_scope().cend()) {
-    error(decl.loc, decl.name.get() + " is trying to be declared twice");
-  }
-  if (auto expr = decl.get_expr()) {
-    expr->accept(*this);
-  }
-  decl.set_depth(scopes.size()-2);
-=======
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
   decl.set_depth(functions.size()-1);
->>>>>>> lab3
   enter(decl);
 }
 
@@ -224,11 +196,8 @@ void Binder::visit(FunDecl &decl) {
   push_scope();
   /* Parameters declaration */
   for (auto param : decl.get_params()) {
-<<<<<<< HEAD
-=======
     if (param->name == decl.name)
       error(decl.loc, decl.name.get() + " has a parameter with the same name");
->>>>>>> lab3
     param->accept(*this);
   }
   /* Body definition */
@@ -251,11 +220,7 @@ void Binder::visit(FunCall &call) {
     arg->accept(*this);
   }
   call.set_decl(decl);
-<<<<<<< HEAD
-  call.set_depth(scopes.size()-2);
-=======
   call.set_depth(functions.size()-1);
->>>>>>> lab3
 }
 
 void Binder::visit(WhileLoop &loop) {
