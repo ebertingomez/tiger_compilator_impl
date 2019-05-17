@@ -204,6 +204,8 @@ void Binder::visit(FunDecl &decl) {
   push_scope();
   /* Parameters declaration */
   for (auto param : decl.get_params()) {
+    if (param->name == decl.name)
+      error(decl.loc, decl.name.get() + " has a parameter with the same name");
     param->accept(*this);
   }
   /* Body definition */
