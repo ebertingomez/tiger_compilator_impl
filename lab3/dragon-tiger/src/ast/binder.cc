@@ -224,8 +224,7 @@ void Binder::visit(FunCall &call) {
     arg->accept(*this);
   }
   call.set_decl(decl);
-  call.set_depth(scopes.size()-2
-  );
+  call.set_depth(scopes.size()-2);
 }
 
 void Binder::visit(WhileLoop &loop) {
