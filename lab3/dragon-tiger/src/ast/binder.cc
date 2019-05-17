@@ -145,7 +145,7 @@ void Binder::visit(Let &let) {
     FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
     if  (func_decl != nullptr){
       decls.push_back(func_decl);
-      func_decl->set_depth(scopes.size()-1);
+      func_decl->set_depth(functions.size()-1);
       enter(*func_decl);
     } 
     else {
@@ -170,7 +170,7 @@ void Binder::visit(Identifier &id) {
   if (decl == nullptr)
     error(id.loc, id.name.get() + " is not a variable");
   id.set_decl(decl);
-  id.set_depth(scopes.size()-1);
+  id.set_depth(functions.size()-1);
   if (id.get_depth() - decl->get_depth() > 0)
     decl->set_escapes();
 }
@@ -185,7 +185,7 @@ void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
   }
-  decl.set_depth(scopes.size()-1);
+  decl.set_depth(functions.size()-1);
   enter(decl);
 }
 
@@ -220,7 +220,7 @@ void Binder::visit(FunCall &call) {
     arg->accept(*this);
   }
   call.set_decl(decl);
-  call.set_depth(scopes.size()-1);
+  call.set_depth(functions.size()-1);
 }
 
 void Binder::visit(WhileLoop &loop) {
