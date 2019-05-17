@@ -245,8 +245,8 @@ void Binder::visit(WhileLoop &loop) {
 void Binder::visit(ForLoop &loop) {
   bool was_loop = is_loop_body;
   is_loop_body = false;
-  loop.get_variable().accept(*this);
   push_scope();
+  loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
   is_loop_body = true;
   loops.push_back(&loop);
