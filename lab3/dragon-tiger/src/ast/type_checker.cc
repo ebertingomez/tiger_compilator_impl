@@ -22,8 +22,8 @@ void TypeChecker::visit(StringLiteral &literal) {
 }
 
 void TypeChecker::visit(Sequence &seq) {
-  Expr * last;
   const auto exprs = seq.get_exprs();
+  Expr * last = exprs.front();
   for (auto expr : exprs) {
     expr->accept(*this);
     last = expr;
