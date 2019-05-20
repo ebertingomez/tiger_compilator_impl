@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
       main = binder.analyze_program(*parser_driver.result_ast);
     }
     ast::type_checker::TypeChecker type_checker;
-    type_checker.analyze_program(*main);
+    main->accept(type_checker);
   }
 
   if (vm.count("dump-ast")) {

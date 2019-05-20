@@ -1,9 +1,6 @@
 #ifndef TYPE_CHECKER_HH
 #define TYPE_CHECKER_HH
 
-#include <unordered_map>
-#include <unordered_set>
-
 #include "nodes.hh"
 
 namespace ast {
@@ -12,8 +9,6 @@ namespace type_checker {
 class TypeChecker : public ASTVisitor {
 
 public:
-  TypeChecker();
-  void analyze_program(FunDecl &);
   virtual void visit(IntegerLiteral &);
   virtual void visit(StringLiteral &);
   virtual void visit(BinaryOperator &);

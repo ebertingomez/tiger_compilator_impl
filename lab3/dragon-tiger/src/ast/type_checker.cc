@@ -10,33 +10,40 @@ using utils::non_fatal_error;
 namespace ast {
 namespace type_checker {
 
-
-TypeChecker::TypeChecker() {
-
-}
-
 /* Binds a whole program. This method wraps the program inside a top-level main
  * function.  Then, it visits the programs with the TypeChecker visitor; binding
  * each identifier to its declaration and computing depths.*/
-void TypeChecker::analyze_program(FunDecl &main) {
-  main.accept(*this);
-}
 void TypeChecker::visit(IntegerLiteral &literal) {
+  literal.set_type(t_int);
 }
 
 void TypeChecker::visit(StringLiteral &literal) {
+  literal.set_type(t_string);
+}
+
+void TypeChecker::visit(Sequence &seq) {
+  Expr * last;
+  const auto exprs = seq.get_exprs();
+  for (auto expr : exprs) {
+    expr->accept(*this);
+    last = expr;
+  }
+  switch (last->get_type())
+  {
+  case t_int:
+    seq.set_type(t_int);
+    break;
+  case t_string:
+    seq.set_type(t_string);
+    break;
+  default:
+    seq.set_type(t_void);
+  }
 }
 
 void TypeChecker::visit(BinaryOperator &op) {
   op.get_left().accept(*this);
   op.get_right().accept(*this);
-}
-
-void TypeChecker::visit(Sequence &seq) {
-  const auto exprs = seq.get_exprs();
-  for (auto expr : exprs) {
-    expr->accept(*this);
-  }
 }
 
 void TypeChecker::visit(Let &let) {
