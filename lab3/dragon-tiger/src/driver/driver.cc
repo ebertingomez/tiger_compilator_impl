@@ -3,6 +3,7 @@
 
 #include "../ast/ast_dumper.hh"
 #include "../ast/binder.hh"
+#include "../ast/type_checker.hh"
 #include "../parser/parser_driver.hh"
 #include "../utils/errors.hh"
 
@@ -15,6 +16,7 @@ int main(int argc, char **argv) {
   ("help,h", "describe arguments")
   ("dump-ast", "dump the parsed AST")
   ("bind,b", "run the binder on the parsed AST")
+  ("type,t", "run the type checker on the parsed AST")
   ("trace-parser", "enable parser traces")
   ("trace-lexer", "enable lexer traces")
   ("verbose,v", "be verbose")
@@ -23,7 +25,7 @@ int main(int argc, char **argv) {
   po::positional_options_description positional;
   positional.add("input-file", 1);
 
-  po::variables_map vm;
+  po::variables_map vm;type_checker
   po::store(po::command_line_parser(argc, argv)
                 .options(options)
                 .positional(positional)
@@ -50,6 +52,15 @@ int main(int argc, char **argv) {
   if (vm.count("bind")) {
     ast::binder::Binder binder;
     main = binder.analyze_program(*parser_driver.result_ast);
+  }
+
+  if (vm.count("type")) {
+    if (main != nullptr){
+      ast::binder::Binder binder;
+      main = binder.analyze_program(*parser_driver.result_ast);
+    }
+    ast::type_checker::TypeChecker type_checker;
+    type_checker.analyze_program(*main);
   }
 
   if (vm.count("dump-ast")) {
