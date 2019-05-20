@@ -41,7 +41,7 @@ void TypeChecker::visit(IfThenElse &ite) {
 
   if (ite.get_condition().get_type() != t_int)
     error(ite.loc, "The condition of the ifthenelse is not valid" );
-  if (ite.get_then_part().get_type() != ite.get_then_part().get_type())
+  if (ite.get_then_part().get_type() != ite.get_else_part().get_type())
     error(ite.loc, "The if and else expression do nor have the same type");
   ite.set_type(ite.get_then_part().get_type());
 
@@ -180,7 +180,7 @@ void TypeChecker::visit(ForLoop &loop) {
     error(loop.loc, ": index type mismatch");
   if (loop.get_body().get_type() != t_void)
     error(loop.loc, ": Body type mismatch");
-    
+
   loop.set_type(t_void);
 }
 
