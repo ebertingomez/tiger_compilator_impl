@@ -22,23 +22,31 @@ void TypeChecker::visit(StringLiteral &literal) {
 }
 
 void TypeChecker::visit(Sequence &seq) {
-  const auto exprs = seq.get_exprs();
-  Expr * last = exprs.front();
-  for (auto expr : exprs) {
-    expr->accept(*this);
-    last = expr;
-  }
-  switch (last->get_type())
-  {
-  case t_int:
-    seq.set_type(t_int);
-    break;
-  case t_string:
-    seq.set_type(t_string);
-    break;
-  default:
+  if (seq.get_exprs().size()>0){
+    const auto exprs = seq.get_exprs();
+    Expr * last = exprs.front();
+    for (auto expr : exprs) {
+      expr->accept(*this);
+      last = expr;
+    }
+    seq.set_type(last->get_type());
+  } else
     seq.set_type(t_void);
+}
+
+void TypeChecker::visit(IfThenElse &ite) {
+  ite.get_condition().accept(*this);
+  ite.get_then_part().accept(*this);
+  ite.get_else_part().accept(*this);
+
+  if (ite.get_condition().get_type() != t_int){
+    error(ite.loc, "The condition of the ifthenelse is not valid" );
   }
+  if (ite.get_then_part().get_type() != ite.get_then_part().get_type()){
+    error(ite.loc, "The if and else expression do nor have the same type" );
+  }
+  ite.set_type(ite.get_then_part().get_type());
+
 }
 
 void TypeChecker::visit(BinaryOperator &op) {
@@ -71,12 +79,6 @@ void TypeChecker::visit(Let &let) {
 
 void TypeChecker::visit(Identifier &id) {
 
-}
-
-void TypeChecker::visit(IfThenElse &ite) {
-  ite.get_condition().accept(*this);
-  ite.get_then_part().accept(*this);
-  ite.get_else_part().accept(*this);
 }
 
 void TypeChecker::visit(VarDecl &decl) {

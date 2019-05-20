@@ -160,9 +160,9 @@ void Binder::visit(Let &let) {
     decls.back()->accept(*this);
     decls.pop_back();
   }
+  is_loop_body = was_loop;
   let.get_sequence().accept(*this);
   pop_scope();
-  is_loop_body = was_loop;
 }
 
 void Binder::visit(Identifier &id) {
