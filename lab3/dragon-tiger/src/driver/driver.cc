@@ -25,7 +25,7 @@ int main(int argc, char **argv) {
   po::positional_options_description positional;
   positional.add("input-file", 1);
 
-  po::variables_map vm;type_checker
+  po::variables_map vm;
   po::store(po::command_line_parser(argc, argv)
                 .options(options)
                 .positional(positional)
