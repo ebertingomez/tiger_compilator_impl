@@ -89,7 +89,7 @@ void TypeChecker::visit(BinaryOperator &binop) {
   if (left->get_type() == right->get_type()){
     if ((op=="+" || op=="-" || op=="*" || op=="/" ) && left->get_type()==t_int)
       binop.set_type(t_int);
-    else if (op==">=" || op=="<" || op=="<=" || op==">")
+    else if ((op==">=" || op=="<" || op=="<=" || op==">") && left->get_type() != t_void)
       binop.set_type(t_int);
     else if ((op=="|" || op=="&") && left->get_type()==t_int) 
       binop.set_type(t_int);
