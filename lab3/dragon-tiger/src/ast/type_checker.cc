@@ -108,6 +108,8 @@ void TypeChecker::visit(Identifier &id) {
 }
 
 void TypeChecker::visit(FunDecl &decl) {
+  if (decl.get_type() != t_undef)
+    return;
   /* Parameters declaration */
   for (auto param : decl.get_params()) {
     param->accept(*this);
@@ -127,25 +129,24 @@ void TypeChecker::visit(FunDecl &decl) {
       text_type = t_void;
     else
       error(decl.loc, decl.name.get()+":  unknown type");
-    
-    if (auto expr = decl.get_expr()) {
-      if (text_type == expr->get_type())
-        decl.set_type(text_type);
-      else
-        error(decl.loc, decl.name.get()+":  Type mismatch");
-    }
+
+    if (text_type == decl.get_expr()->get_type())
+      decl.set_type(text_type);
+    else
+      error(decl.loc, decl.name.get()+":  Type mismatch");
   }
   else{
-    if (auto expr = decl.get_expr()) {
-      if (expr->get_type() == t_void)
-        decl.set_type(t_void);
-      else
-        error(decl.loc, decl.name.get()+": Void type mismatch");
-    }
+    if (decl.get_expr()->get_type() == t_void)
+      decl.set_type(t_void);
+    else
+      error(decl.loc, decl.name.get()+": Void type mismatch");
   }  
 }
 
 void TypeChecker::visit(FunCall &call) {
+  if (call.get_decl()->get_type() == t_undef)
+    call.get_decl()->accept(*this);
+
   for (auto arg : call.get_args()) {
     arg->accept(*this);
   }
