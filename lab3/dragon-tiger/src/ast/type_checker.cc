@@ -114,7 +114,7 @@ void TypeChecker::visit(FunDecl &decl) {
   }
   /* Body definition */
   if (auto expr = decl.get_expr()) {
-    decl.get_expr()->accept(*this);
+    expr->accept(*this);
   }
 
   if (decl.type_name){
@@ -127,17 +127,21 @@ void TypeChecker::visit(FunDecl &decl) {
       text_type = t_void;
     else
       error(decl.loc, decl.name.get()+":  unknown type");
-
-    if (text_type == decl.get_expr()->get_type())
-      decl.set_type(text_type);
-    else
-      error(decl.loc, decl.name.get()+":  Type mismatch");
+    
+    if (auto expr = decl.get_expr()) {
+      if (text_type == expr->get_type())
+        decl.set_type(text_type);
+      else
+        error(decl.loc, decl.name.get()+":  Type mismatch");
+    }
   }
   else{
-    if (decl.get_expr()->get_type() == t_void)
-      decl.set_type(t_void);
-    else
-      error(decl.loc, decl.name.get()+": Void type mismatch");
+    if (auto expr = decl.get_expr()) {
+      if (expr->get_type() == t_void)
+        decl.set_type(t_void);
+      else
+        error(decl.loc, decl.name.get()+": Void type mismatch");
+    }
   }  
 }
 
