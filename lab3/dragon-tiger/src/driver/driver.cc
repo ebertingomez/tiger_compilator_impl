@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
   }
 
   if (vm.count("type")) {
-    if (main != nullptr){
+    if (main == nullptr){
       ast::binder::Binder binder;
       main = binder.analyze_program(*parser_driver.result_ast);
     }
