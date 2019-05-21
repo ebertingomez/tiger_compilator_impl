@@ -125,6 +125,8 @@ void TypeChecker::visit(FunDecl &decl) {
       text_type = t_string;
     else if (decl.type_name.get() == Symbol("void"))
       text_type = t_void;
+    else
+      error(decl.loc, decl.name.get()+":  unknown type");
 
     if (text_type == decl.get_expr()->get_type())
       decl.set_type(text_type);
