@@ -144,7 +144,7 @@ void TypeChecker::visit(FunDecl &decl) {
 }
 
 void TypeChecker::visit(FunCall &call) {
-  if (call.get_decl()->get_type() == t_undef)
+  if (call.get_decl()->get_type() == t_undef && call.func_name != call.get_decl()->name)
     call.get_decl()->accept(*this);
 
   for (auto arg : call.get_args()) {
@@ -161,8 +161,22 @@ void TypeChecker::visit(FunCall &call) {
     args.pop_back();
     params.pop_back();
   }
-
-  call.set_type(call.get_decl()->get_type());
+  
+  if (call.func_name != call.get_decl()->name)
+    call.set_type(call.get_decl()->get_type());
+  else {
+    if (call.get_decl()->type_name){
+      if (call.get_decl()->type_name.get() == Symbol("int"))
+        call.set_type(t_int);
+      else if (call.get_decl()->type_name.get() == Symbol("string"))
+        call.set_type(t_string);
+      else
+        error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
+    }
+    else{
+      call.set_type(t_void);
+    }
+  }
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
