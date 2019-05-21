@@ -123,7 +123,7 @@ void TypeChecker::visit(FunDecl &decl) {
       text_type = t_int;
     else if (decl.type_name.get() == Symbol("string"))
       text_type = t_string;
-    else if (decl.type_name.get() == Symbol("void"))
+    else if (decl.type_name.get() == Symbol("void") && decl.is_external)
       text_type = t_void;
     else
       error(decl.loc, decl.name.get()+":  unknown type");
