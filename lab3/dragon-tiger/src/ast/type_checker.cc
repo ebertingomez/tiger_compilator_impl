@@ -159,7 +159,7 @@ void TypeChecker::visit(FunDecl &decl) {
 void TypeChecker::visit(FunCall &call) {
   if(!call.get_decl())
     error(call.loc, call.func_name.get()+": No declaration in this call");
-    
+
   if (call.get_decl()->get_type() == t_undef && call.func_name != call.get_decl()->name)
     call.get_decl()->accept(*this);
 
@@ -173,7 +173,7 @@ void TypeChecker::visit(FunCall &call) {
   std::vector<VarDecl *> params(call.get_decl()->get_params());
   while (!args.empty()){
     if (args.back()->get_type() != params.back()->get_type())
-      error(call.loc, call.get_decl()->name.get()+": arguments and parameters type mismatch");
+      error(call.loc, call.get_decl()->name.get()+": arguments and parameters type mismatch: ",args.back()->get_type(),params.back()->get_type());
     args.pop_back();
     params.pop_back();
   }
