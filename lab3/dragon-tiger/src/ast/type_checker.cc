@@ -117,9 +117,9 @@ void TypeChecker::visit(FunDecl &decl) {
   if (decl.get_type() != t_undef)
     return;
 
-  bool visited = true;
+  bool visited = false;
   for (auto param : decl.get_params())
-    visited &= (param->get_type!=t_undef);
+    visited = (param->get_type()==t_undef)? visited :true;
   if (visited)
     return;
   /* Parameters declaration */
@@ -172,10 +172,14 @@ void TypeChecker::visit(FunCall &call) {
         (call.func_name.get() != call.get_decl()->name.get() ||
         call.get_decl()->is_external))
     call.get_decl()->accept(*this);
-
-  for (auto arg : call.get_args()) {
+  bool visited = false;
+  for (auto arg : call.get_args())
+    visited = (arg->get_type()==t_undef)? visited :true;
+  if (visited)
+    return;
+  for (auto arg : call.get_args())
     arg->accept(*this);
-  }
+  
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
   
