@@ -119,28 +119,7 @@ void TypeChecker::visit(FunDecl &decl) {
     expr->accept(*this);
   }
 
-  if (decl.type_name){
-    Type text_type;
-    if (decl.type_name.get().get() == "int")
-      text_type = t_int;
-    else if (decl.type_name.get().get() == "string")
-      text_type = t_string;
-    else if (decl.type_name.get().get() == "void" && decl.is_external)
-      text_type = t_void;
-    else
-      error(decl.loc, decl.name.get()+":  unknown type");
 
-    if (text_type == decl.get_expr()->get_type())
-      decl.set_type(text_type);
-    else
-      error(decl.loc, decl.name.get()+":  Type mismatch");
-  }
-  else{
-    if (decl.get_expr()->get_type() == t_void)
-      decl.set_type(t_void);
-    else
-      error(decl.loc, decl.name.get()+": Void type mismatch");
-  }  
 }
 
 void TypeChecker::visit(FunCall &call) {
