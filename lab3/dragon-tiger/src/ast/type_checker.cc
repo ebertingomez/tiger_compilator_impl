@@ -55,8 +55,11 @@ void TypeChecker::visit(Let &let) {
 }
 
 void TypeChecker::visit(VarDecl &decl) {
-  decl.get_expr()->accept(*this);
-  auto type = decl.get_expr()->get_type();
+  Type type = t_undef;
+  if (decl.get_expr()){
+    decl.get_expr()->accept(*this);
+    type = decl.get_expr()->get_type();
+  }
 
   if (decl.type_name){
     Type text_type;
@@ -66,10 +69,14 @@ void TypeChecker::visit(VarDecl &decl) {
       text_type = t_string;
     else error(decl.loc, decl.name.get()+": Invalid type");
 
-    if (text_type == type)
-      decl.set_type(type);
+    if (type != t_undef){
+      if (text_type == type)
+        decl.set_type(type);
+      else
+        error(decl.loc, decl.name.get()+": Invalid type");
+    }
     else
-      error(decl.loc, decl.name.get()+": Invalid type");
+       decl.set_type(text_type);
   }
   else{
     if (type != t_void)
