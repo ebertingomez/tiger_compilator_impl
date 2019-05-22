@@ -178,7 +178,7 @@ void TypeChecker::visit(FunCall &call) {
     params.pop_back();
   }
   
-  if (call.func_name != call.get_decl()->name)
+  if (call.func_name.get() != call.get_decl()->name.get())
     call.set_type(call.get_decl()->get_type());
   else {
     if (call.get_decl()->type_name){
