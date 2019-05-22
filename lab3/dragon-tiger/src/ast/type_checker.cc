@@ -153,14 +153,6 @@ void TypeChecker::visit(FunCall &call) {
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
   
-  std::vector<Expr *> args(call.get_args());
-  std::vector<VarDecl *> params(call.get_decl()->get_params());
-  while (!args.empty()){
-    if (args.back()->get_type() != params.back()->get_type())
-      error(call.loc, call.get_decl()->name.get()+": arguments and parameters type mismatch");
-    args.pop_back();
-    params.pop_back();
-  }
   
   if (call.func_name != call.get_decl()->name)
     call.set_type(call.get_decl()->get_type());
