@@ -119,7 +119,28 @@ void TypeChecker::visit(FunDecl &decl) {
     expr->accept(*this);
   }
 
+  if (decl.type_name){
+    Type text_type;
+    if (decl.type_name.get().get() == "int")
+      text_type = t_int;
+    else if (decl.type_name.get().get() == "string")
+      text_type = t_string;
+    else if (decl.type_name.get().get() == "void" && decl.is_external)
+      text_type = t_void;
+    else
+      error(decl.loc, decl.name.get()+":  unknown type");
 
+    if (text_type == decl.get_expr()->get_type())
+      decl.set_type(text_type);
+    else
+      error(decl.loc, decl.name.get()+":  Type mismatch");
+  }
+  else{
+    if (decl.get_expr()->get_type() == t_void)
+      decl.set_type(t_void);
+    else
+      error(decl.loc, decl.name.get()+": Void type mismatch");
+  }  
 }
 
 void TypeChecker::visit(FunCall &call) {
@@ -132,22 +153,30 @@ void TypeChecker::visit(FunCall &call) {
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
   
-  
-  if (call.func_name != call.get_decl()->name)
-    call.set_type(call.get_decl()->get_type());
-  else {
-    if (call.get_decl()->type_name){
-      if (call.get_decl()->type_name.get().get() == "int")
-        call.set_type(t_int);
-      else if (call.get_decl()->type_name.get().get() == "string")
-        call.set_type(t_string);
-      else
-        error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
-    }
-    else{
-      call.set_type(t_void);
-    }
+  std::vector<Expr *> args(call.get_args());
+  std::vector<VarDecl *> params(call.get_decl()->get_params());
+  while (!args.empty()){
+    if (args.back()->get_type() != params.back()->get_type())
+      error(call.loc, call.get_decl()->name.get()+": arguments and parameters type mismatch");
+    args.pop_back();
+    params.pop_back();
   }
+  
+  // if (call.func_name != call.get_decl()->name)
+  //   call.set_type(call.get_decl()->get_type());
+  // else {
+  //   if (call.get_decl()->type_name){
+  //     if (call.get_decl()->type_name.get().get() == "int")
+  //       call.set_type(t_int);
+  //     else if (call.get_decl()->type_name.get().get() == "string")
+  //       call.set_type(t_string);
+  //     else
+  //       error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
+  //   }
+  //   else{
+  //     call.set_type(t_void);
+  //   }
+  // }
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
