@@ -55,8 +55,6 @@ void TypeChecker::visit(Let &let) {
 }
 
 void TypeChecker::visit(VarDecl &decl) {
-  if (!decl.get_expr())
-    error(decl.loc, decl.name.get()+": No declaration in this variable");
   decl.get_expr()->accept(*this);
   auto type = decl.get_expr()->get_type();
 
