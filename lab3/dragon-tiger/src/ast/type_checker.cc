@@ -55,8 +55,9 @@ void TypeChecker::visit(Let &let) {
 }
 
 void TypeChecker::visit(VarDecl &decl) {
-  if (auto expr = decl.get_expr())
-    expr->accept(*this);
+  if (!decl.get_expr())
+    error(decl.loc, decl.name.get()+": No declaration in this variable");
+  decl.get_expr()->accept(*this);
   auto type = decl.get_expr()->get_type();
 
   if (decl.type_name){
@@ -76,7 +77,7 @@ void TypeChecker::visit(VarDecl &decl) {
     if (type != t_void)
       decl.set_type(type);
     else
-      error(decl.loc, decl.name.get()+": The type is void");
+      error(decl.loc, decl.name.get()+": The type of the variable is void");
   }
 }
 
@@ -104,6 +105,8 @@ void TypeChecker::visit(BinaryOperator &binop) {
 }
 
 void TypeChecker::visit(Identifier &id) {
+  if(id.get_decl())
+    error(id.loc, id.name.get()+": No declaration operand");
   id.set_type(id.get_decl()->get_type());
 }
 
@@ -114,9 +117,14 @@ void TypeChecker::visit(FunDecl &decl) {
   for (auto param : decl.get_params()) {
     param->accept(*this);
   }
+  Type expr_type;
   /* Body definition */
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
+    expr_type = expr->get_type();
+  }
+  else {
+    expr_type = t_void;
   }
 
   if (decl.type_name){
@@ -130,13 +138,13 @@ void TypeChecker::visit(FunDecl &decl) {
     else
       error(decl.loc, decl.name.get()+":  unknown type");
 
-    if (text_type == decl.get_expr()->get_type())
+    if (text_type == expr_type)
       decl.set_type(text_type);
     else
       error(decl.loc, decl.name.get()+":  Type mismatch");
   }
   else{
-    if (decl.get_expr()->get_type() == t_void)
+    if (expr_type == t_void)
       decl.set_type(t_void);
     else
       error(decl.loc, decl.name.get()+": Void type mismatch");
@@ -162,21 +170,21 @@ void TypeChecker::visit(FunCall &call) {
     params.pop_back();
   }
   
-  // if (call.func_name != call.get_decl()->name)
-  //   call.set_type(call.get_decl()->get_type());
-  // else {
-  //   if (call.get_decl()->type_name){
-  //     if (call.get_decl()->type_name.get().get() == "int")
-  //       call.set_type(t_int);
-  //     else if (call.get_decl()->type_name.get().get() == "string")
-  //       call.set_type(t_string);
-  //     else
-  //       error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
-  //   }
-  //   else{
-  //     call.set_type(t_void);
-  //   }
-  // }
+  if (call.func_name != call.get_decl()->name)
+    call.set_type(call.get_decl()->get_type());
+  else {
+    if (call.get_decl()->type_name){
+      if (call.get_decl()->type_name.get().get() == "int")
+        call.set_type(t_int);
+      else if (call.get_decl()->type_name.get().get() == "string")
+        call.set_type(t_string);
+      else
+        error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
+    }
+    else{
+      call.set_type(t_void);
+    }
+  }
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
