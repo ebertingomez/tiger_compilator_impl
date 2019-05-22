@@ -157,6 +157,9 @@ void TypeChecker::visit(FunDecl &decl) {
 }
 
 void TypeChecker::visit(FunCall &call) {
+  if(!call.get_decl())
+    error(call.loc, call.func_name.get()+": No declaration in this call");
+    
   if (call.get_decl()->get_type() == t_undef && call.func_name != call.get_decl()->name)
     call.get_decl()->accept(*this);
 
