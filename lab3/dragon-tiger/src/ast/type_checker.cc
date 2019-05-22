@@ -105,8 +105,6 @@ void TypeChecker::visit(BinaryOperator &binop) {
 }
 
 void TypeChecker::visit(Identifier &id) {
-  if(id.get_decl())
-    error(id.loc, id.name.get()+": No declaration operand");
   id.set_type(id.get_decl()->get_type());
 }
 
