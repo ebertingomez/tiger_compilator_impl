@@ -142,7 +142,11 @@ void TypeChecker::visit(FunDecl &decl) {
       text_type = t_void;
     else
       error(decl.loc, decl.name.get()+":  unknown type");
-
+    
+    if (decl.is_external){
+      decl.set_type(text_type);
+      return;
+    }
     if (text_type == expr_type)
       decl.set_type(text_type);
     else
