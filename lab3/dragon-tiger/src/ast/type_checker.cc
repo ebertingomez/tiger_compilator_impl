@@ -61,9 +61,9 @@ void TypeChecker::visit(VarDecl &decl) {
 
   if (decl.type_name){
     Type text_type;
-    if (decl.type_name.get() == Symbol("int"))
+    if (decl.type_name.get().get() == "int")
       text_type = t_int;
-    else if (decl.type_name.get() == Symbol("string"))
+    else if (decl.type_name.get().get() == "string")
       text_type = t_string;
     else error(decl.loc, decl.name.get()+": Invalid type");
 
@@ -121,11 +121,11 @@ void TypeChecker::visit(FunDecl &decl) {
 
   if (decl.type_name){
     Type text_type;
-    if (decl.type_name.get() == Symbol("int"))
+    if (decl.type_name.get().get() == "int")
       text_type = t_int;
-    else if (decl.type_name.get() == Symbol("string"))
+    else if (decl.type_name.get().get() == "string")
       text_type = t_string;
-    else if (decl.type_name.get() == Symbol("void") && decl.is_external)
+    else if (decl.type_name.get().get() == "void" && decl.is_external)
       text_type = t_void;
     else
       error(decl.loc, decl.name.get()+":  unknown type");
@@ -158,9 +158,9 @@ void TypeChecker::visit(FunCall &call) {
     call.set_type(call.get_decl()->get_type());
   else {
     if (call.get_decl()->type_name){
-      if (call.get_decl()->type_name.get() == Symbol("int"))
+      if (call.get_decl()->type_name.get().get() == "int")
         call.set_type(t_int);
-      else if (call.get_decl()->type_name.get() == Symbol("string"))
+      else if (call.get_decl()->type_name.get().get() == "string")
         call.set_type(t_string);
       else
         error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
