@@ -113,9 +113,14 @@ void TypeChecker::visit(Identifier &id) {
     error(id.loc, id.name.get()+": No declaration operand");
   id.set_type(id.get_decl()->get_type());
 }
-
 void TypeChecker::visit(FunDecl &decl) {
   if (decl.get_type() != t_undef)
+    return;
+
+  bool visited = true;
+  for (auto param : decl.get_params())
+    visited &= (param->get_type!=t_undef);
+  if (visited)
     return;
   /* Parameters declaration */
   for (auto param : decl.get_params()) {
