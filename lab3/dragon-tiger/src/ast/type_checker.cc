@@ -173,7 +173,7 @@ void TypeChecker::visit(FunCall &call) {
   std::vector<VarDecl *> params(call.get_decl()->get_params());
   while (!args.empty()){
     if (args.back()->get_type() != params.back()->get_type())
-      error(call.loc, call.get_decl()->name.get()+": arguments and parameters type mismatch: ",args.back()->get_type(),params.back()->get_type());
+      error(call.loc, call.get_decl()->name.get()+": arguments and parameters type mismatch: "+std::to_string(args.back()->get_type()),std::to_string(params.back()->get_type()));
     args.pop_back();
     params.pop_back();
   }
