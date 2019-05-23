@@ -116,16 +116,32 @@ void TypeChecker::visit(Identifier &id) {
 void TypeChecker::visit(FunDecl &decl) {
   if (decl.get_type() != t_undef)
     return;
-
-  bool visited = false;
-  for (auto param : decl.get_params())
-    visited = (param->get_type()==t_undef)? visited :true;
-  if (visited)
-    return;
+  
   /* Parameters declaration */
   for (auto param : decl.get_params()) {
     param->accept(*this);
   }
+
+  Type text_type;
+  if (decl.type_name){
+    if (decl.type_name.get().get() == "int")
+      text_type = t_int;
+    else if (decl.type_name.get().get() == "string")
+      text_type = t_string;
+    else if (decl.type_name.get().get() == "void" && decl.is_external)
+      text_type = t_void;
+    else
+      error(decl.loc, decl.name.get()+":  unknown type");
+  }
+  else{
+    text_type = t_void;
+  }
+
+  if (decl.is_external){
+      decl.set_type(text_type);
+      return;
+  }
+
   Type expr_type;
   /* Body definition */
   if (auto expr = decl.get_expr()) {
@@ -136,32 +152,10 @@ void TypeChecker::visit(FunDecl &decl) {
     expr_type = t_void;
   }
 
-  if (decl.type_name){
-    Type text_type;
-    if (decl.type_name.get().get() == "int")
-      text_type = t_int;
-    else if (decl.type_name.get().get() == "string")
-      text_type = t_string;
-    else if (decl.type_name.get().get() == "void" && decl.is_external)
-      text_type = t_void;
-    else
-      error(decl.loc, decl.name.get()+":  unknown type");
-    
-    if (decl.is_external){
-      decl.set_type(text_type);
-      return;
-    }
-    if (text_type == expr_type)
-      decl.set_type(text_type);
-    else
-      error(decl.loc, decl.name.get()+":  Type mismatch");
-  }
-  else{
-    if (expr_type == t_void)
-      decl.set_type(t_void);
-    else
-      error(decl.loc, decl.name.get()+": Void type mismatch");
-  }  
+  if (text_type == expr_type)
+    decl.set_type(text_type);
+  else
+    error(decl.loc, decl.name.get()+":  Type mismatch"); 
 }
 
 void TypeChecker::visit(FunCall &call) {
@@ -191,23 +185,8 @@ void TypeChecker::visit(FunCall &call) {
     args.pop_back();
     params.pop_back();
   }
-
-  Type t;
-  if (call.get_decl()->type_name){
-    if (call.get_decl()->type_name.get().get() == "int")
-      t = t_int;
-    else if (call.get_decl()->type_name.get().get() == "string")
-      t = t_string;
-    else if (call.get_decl()->type_name.get().get() == "void" && call.get_decl()->is_external)
-      t = t_void;
-    else
-      error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
-  }
-  else{
-    t = t_void;
-  }
   
-  call.set_type(t);
+  call.set_type(call.get_decl()->get_type());
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
