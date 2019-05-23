@@ -171,13 +171,13 @@ void TypeChecker::visit(FunCall &call) {
   bool visited = false;
   for (auto arg : call.get_args())
     visited = (arg->get_type()==t_undef)? visited :true;
-  if (visited)
-    return;
-  for (auto arg : call.get_args())
-    arg->accept(*this);
+  if (!visited)
+    for (auto arg : call.get_args())
+      arg->accept(*this);
+    if (call.get_decl()->get_type() == t_undef)
+      call.get_decl()->accept(*this);
     
-  if (call.get_decl()->get_type() == t_undef /*&& call.get_decl()->is_external*/)
-    call.get_decl()->accept(*this);
+  
   
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
