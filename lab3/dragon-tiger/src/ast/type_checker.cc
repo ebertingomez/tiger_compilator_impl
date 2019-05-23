@@ -136,11 +136,10 @@ void TypeChecker::visit(FunDecl &decl) {
   else{
     text_type = t_void;
   }
+  decl.set_type(text_type);
 
-  if (decl.is_external){
-      decl.set_type(text_type);
+  if (decl.is_external)
       return;
-  }
 
   Type expr_type;
   /* Body definition */
@@ -148,13 +147,10 @@ void TypeChecker::visit(FunDecl &decl) {
     expr->accept(*this);
     expr_type = expr->get_type();
   }
-  else {
-    expr_type = t_void;
-  }
-
-  if (text_type == expr_type)
-    decl.set_type(text_type);
   else
+    expr_type = t_void;
+
+  if (text_type != expr_type)
     error(decl.loc, decl.name.get()+":  Type mismatch"); 
 }
 
