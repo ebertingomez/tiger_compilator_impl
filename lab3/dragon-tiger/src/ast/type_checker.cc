@@ -176,6 +176,9 @@ void TypeChecker::visit(FunCall &call) {
       arg->accept(*this);
     if (call.get_decl()->get_type() == t_undef)
       call.get_decl()->accept(*this);
+
+  if (call.get_type() != t_undef)
+    return;
     
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
@@ -188,23 +191,31 @@ void TypeChecker::visit(FunCall &call) {
     args.pop_back();
     params.pop_back();
   }
+
+  Type t;
+  if (call.get_decl()->type_name){
+    if (call.get_decl()->type_name.get().get() == "int")
+      t = t_int;
+    else if (call.get_decl()->type_name.get().get() == "string")
+      t = t_string;
+    else if (call.get_decl()->type_name.get().get() == "void" && call.get_decl()->is_external)
+      t = t_void;
+    else
+      error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
+  }
+  else{
+    t = t_void;
+  }
+
+
   
-  if (call.func_name.get() != call.get_decl()->name.get())
-    call.set_type(call.get_decl()->get_type());
+  if (call.func_name.get() == call.get_decl()->name.get() )
+    call.set_type(t);
   else {
-    if (call.get_decl()->type_name){
-      if (call.get_decl()->type_name.get().get() == "int")
-        call.set_type(t_int);
-      else if (call.get_decl()->type_name.get().get() == "string")
-        call.set_type(t_string);
-      else if (call.get_decl()->type_name.get().get() == "void" && call.get_decl()->is_external)
-        call.set_type(t_void);
-      else
-        error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
-    }
-    else{
-      call.set_type(t_void);
-    }
+    if (visited)
+      call.set_type(t);
+    else
+      call.set_type(call.get_decl()->get_type());
   }
 }
 
