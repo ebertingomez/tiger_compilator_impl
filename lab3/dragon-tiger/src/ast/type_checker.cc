@@ -114,9 +114,6 @@ void TypeChecker::visit(Identifier &id) {
   id.set_type(id.get_decl()->get_type());
 }
 void TypeChecker::visit(FunDecl &decl) {
-  if (decl.get_type() != t_undef)
-    return;
-
   bool visited = false;
   for (auto param : decl.get_params())
     visited = (param->get_type()==t_undef)? visited :true;
@@ -174,8 +171,7 @@ void TypeChecker::visit(FunCall &call) {
   if (!visited)
     for (auto arg : call.get_args())
       arg->accept(*this);
-    if (call.get_decl()->get_type() == t_undef && 
-        (call.get_decl()->is_external || call.func_name.get() != call.get_decl()->name.get()))
+    if (call.get_decl()->get_type() == t_undef)
       call.get_decl()->accept(*this);
 
   if (call.get_type() != t_undef)
@@ -207,8 +203,6 @@ void TypeChecker::visit(FunCall &call) {
   else{
     t = t_void;
   }
-
-
   
   if (call.func_name.get() == call.get_decl()->name.get() )
     call.set_type(t);
