@@ -175,7 +175,7 @@ void TypeChecker::visit(FunCall &call) {
     for (auto arg : call.get_args())
       arg->accept(*this);
     if (call.get_decl()->get_type() == t_undef && 
-        call.get_decl()->is_external || call.func_name.get() != call.get_decl()->name.get() )
+        (call.get_decl()->is_external || call.func_name.get() != call.get_decl()->name.get()))
       call.get_decl()->accept(*this);
 
   if (call.get_type() != t_undef)
