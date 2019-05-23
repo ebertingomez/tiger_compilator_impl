@@ -207,14 +207,10 @@ void TypeChecker::visit(FunCall &call) {
     t = t_void;
   }
   
-  if (call.func_name.get() == call.get_decl()->name.get() )
+  if (visited)
     call.set_type(t);
-  else {
-    if (visited)
-      call.set_type(t);
-    else
-      call.set_type(call.get_decl()->get_type());
-  }
+  else
+    call.set_type(call.get_decl()->get_type());
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
