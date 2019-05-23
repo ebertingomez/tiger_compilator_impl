@@ -199,7 +199,7 @@ void TypeChecker::visit(FunCall &call) {
         call.set_type(t_int);
       else if (call.get_decl()->type_name.get().get() == "string")
         call.set_type(t_string);
-      else if (call.get_decl()->type_name.get().get() == "void")
+      else if (call.get_decl()->type_name.get().get() == "void" && call.get_decl()->is_external)
         call.set_type(t_void);
       else
         error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
