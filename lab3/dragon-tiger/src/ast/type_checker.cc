@@ -207,14 +207,7 @@ void TypeChecker::visit(FunCall &call) {
     t = t_void;
   }
   
-  if (call.func_name.get() == call.get_decl()->name.get() )
-    call.set_type(t);
-  else {
-    if (visited)
-      call.set_type(t);
-    else
-      call.set_type(call.get_decl()->get_type());
-  }
+  call.set_type(t);
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
@@ -224,6 +217,7 @@ void TypeChecker::visit(WhileLoop &loop) {
     error(loop.loc, ": Condition type mismatch");
   if (loop.get_body().get_type() != t_void)
     error(loop.loc, ": Body type mismatch");
+
 
   loop.set_type(t_void);
 }
