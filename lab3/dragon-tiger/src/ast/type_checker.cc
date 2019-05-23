@@ -157,19 +157,18 @@ void TypeChecker::visit(FunDecl &decl) {
 void TypeChecker::visit(FunCall &call) {
   if(!call.get_decl())
     error(call.loc, call.func_name.get()+": No declaration in this call");
-
-  bool visited = false;
+  
   for (auto arg : call.get_args())
-    visited = (arg->get_type()==t_undef)? visited :true;
-  if (!visited)
-    for (auto arg : call.get_args())
-      arg->accept(*this);
-    if (call.get_decl()->get_type() == t_undef)
-      call.get_decl()->accept(*this);
+    arg->accept(*this);
+
+  if (call.get_decl()->get_type() == t_undef)
+    call.get_decl()->accept(*this);
 
   if (call.get_type() != t_undef)
     return;
-    
+  
+  call.set_type(call.get_decl()->get_type());
+  
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
   
@@ -181,8 +180,6 @@ void TypeChecker::visit(FunCall &call) {
     args.pop_back();
     params.pop_back();
   }
-  
-  call.set_type(call.get_decl()->get_type());
 }
 
 void TypeChecker::visit(WhileLoop &loop) {
