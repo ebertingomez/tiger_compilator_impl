@@ -118,9 +118,9 @@ void TypeChecker::visit(FunDecl &decl) {
     return;
   
   /* Parameters declaration */
-  for (auto param : decl.get_params()) {
+  for (auto param : decl.get_params())
     param->accept(*this);
-  }
+
 
   Type text_type;
   if (decl.type_name){
@@ -133,13 +133,10 @@ void TypeChecker::visit(FunDecl &decl) {
     else
       error(decl.loc, decl.name.get()+":  unknown type");
   }
-  else{
+  else
     text_type = t_void;
-  }
-  decl.set_type(text_type);
 
-  if (decl.is_external)
-      return;
+  decl.set_type(text_type);
 
   Type expr_type;
   /* Body definition */
@@ -149,7 +146,9 @@ void TypeChecker::visit(FunDecl &decl) {
   }
   else
     expr_type = t_void;
-
+  
+  if (decl.is_external)
+      return;
   if (text_type != expr_type)
     error(decl.loc, decl.name.get()+":  Type mismatch"); 
 }
@@ -168,7 +167,7 @@ void TypeChecker::visit(FunCall &call) {
     return;
   
   call.set_type(call.get_decl()->get_type());
-  
+
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
   
@@ -189,7 +188,6 @@ void TypeChecker::visit(WhileLoop &loop) {
     error(loop.loc, ": Condition type mismatch");
   if (loop.get_body().get_type() != t_void)
     error(loop.loc, ": Body type mismatch");
-
 
   loop.set_type(t_void);
 }
