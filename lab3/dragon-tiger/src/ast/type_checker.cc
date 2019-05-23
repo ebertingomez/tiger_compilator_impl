@@ -177,8 +177,6 @@ void TypeChecker::visit(FunCall &call) {
     if (call.get_decl()->get_type() == t_undef)
       call.get_decl()->accept(*this);
     
-  
-  
   if (call.get_args().size() != call.get_decl()->get_params().size())
     error(call.loc, call.get_decl()->name.get()+": number of arguments and parameters mismatch");
   
