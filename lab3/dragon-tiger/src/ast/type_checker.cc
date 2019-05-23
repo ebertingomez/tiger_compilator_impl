@@ -114,6 +114,9 @@ void TypeChecker::visit(Identifier &id) {
   id.set_type(id.get_decl()->get_type());
 }
 void TypeChecker::visit(FunDecl &decl) {
+  if (decl.get_type() != t_undef)
+    return;
+
   bool visited = false;
   for (auto param : decl.get_params())
     visited = (param->get_type()==t_undef)? visited :true;
