@@ -175,7 +175,7 @@ void TypeChecker::visit(FunCall &call) {
     return;
   for (auto arg : call.get_args())
     arg->accept(*this);
-    
+
   if (call.get_decl()->get_type() == t_undef && call.get_decl()->is_external)
     call.get_decl()->accept(*this);
   
@@ -203,9 +203,6 @@ void TypeChecker::visit(FunCall &call) {
         call.set_type(t_void);
       else
         error(call.get_decl()->loc, call.get_decl()->name.get()+":  unknown type");
-    }
-    else{
-      call.set_type(t_void);
     }
   }
 }
