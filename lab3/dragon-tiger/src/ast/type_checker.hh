@@ -25,7 +25,7 @@ public:
   virtual void visit(Assign &);
 };
 
-} // namespace binder
+} // namespace type_checker
 } // namespace ast
 
 #endif // TYPE_CHECKER_HH

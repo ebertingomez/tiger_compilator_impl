@@ -219,5 +219,5 @@ void TypeChecker::visit(Assign &assign) {
   assign.set_type(t_void);
 }
 
-} // namespace TypeChecker
+} // namespace type_checker
 } // namespace ast

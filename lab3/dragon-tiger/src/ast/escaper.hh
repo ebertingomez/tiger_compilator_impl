@@ -11,6 +11,8 @@ namespace escaper {
 
 class Escaper : public ASTVisitor {
 
+FunDecl * current_function;
+
 public:
   Escaper();
   virtual void visit(IntegerLiteral &);
@@ -29,7 +31,7 @@ public:
   virtual void visit(Assign &);
 };
 
-} // namespace binder
+} // namespace escaper
 } // namespace ast
 
 #endif // ESCAPER_HH
