@@ -103,9 +103,9 @@ void TypeChecker::visit(BinaryOperator &binop) {
       binop.set_type(t_int);
     else
       error(binop.loc, ": Incorrect operand");
-  } else {
-    error(binop.loc, ": Incorrect comparison operand ");
-  }
+  } else
+      error(binop.loc, ": Incorrect comparison operand ");
+  
 }
 
 void TypeChecker::visit(Identifier &id) {
