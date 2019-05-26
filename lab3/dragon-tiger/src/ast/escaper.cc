@@ -49,6 +49,7 @@ void Escaper::visit(FunDecl &decl) {
   for (VarDecl * varDecl : decl.get_params())
     varDecl->accept(*this);
   decl.get_expr()->accept(*this);
+  current_function = old_function;
 }
 
 void Escaper::visit(FunCall &call) {
