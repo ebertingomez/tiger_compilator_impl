@@ -81,10 +81,6 @@ llvm::Value *IRGenerator::visit(const Let &let) {
   return let.get_sequence().accept(*this);
 }
 
-llvm::Value *IRGenerator::visit(const Identifier &id) {
-  UNIMPLEMENTED();
-}
-
 llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   UNIMPLEMENTED();
 }
@@ -126,6 +122,11 @@ llvm::Value *IRGenerator::visit(const FunDecl &decl) {
     pending_func_bodies.push_front(&decl);
 
   return nullptr;
+}
+
+llvm::Value *IRGenerator::visit(const Identifier &id) {
+  const VarDecl * decl = &id.get_decl().get();
+  return Builder.CreateLoad(allocations[decl]);
 }
 
 llvm::Value *IRGenerator::visit(const FunCall &call) {
