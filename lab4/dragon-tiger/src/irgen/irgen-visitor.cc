@@ -128,8 +128,9 @@ llvm::Value *IRGenerator::visit(const Identifier &id) {
   llvm::Type * type = llvm_type(id.get_type());
   llvm::Value * value = address_of(id);
   llvm::Value * pointer = Builder.CreatePointerCast(value,type);
-
-  return Builder.CreateLoad(type,pointer,id.name.get());
+  
+  Builder.CreateLoad(pointer);
+  return value;
 
 }
 
