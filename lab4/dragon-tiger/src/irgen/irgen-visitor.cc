@@ -93,11 +93,16 @@ llvm::Value *IRGenerator::visit(const VarDecl &decl) {
   llvm::Value * pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
 
   llvm::Value * value = decl.get_expr()->accept(*this);
-  allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,value));
-  if (decl.get_escapes())
-    frame_position.insert(std::pair<const VarDecl *, int>(&decl,decl.depth));
-    
-  Builder.CreateStore(value,pointer);
+
+  if (value != nullptr) {
+      allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,value));
+      if (decl.get_escapes())
+        frame_position.insert(std::pair<const VarDecl *, int>(&decl,decl.depth));
+  
+      Builder.CreateStore(value,pointer);
+  }
+
+  return nullptr;
 }
 
 llvm::Value *IRGenerator::visit(const FunDecl &decl) {
