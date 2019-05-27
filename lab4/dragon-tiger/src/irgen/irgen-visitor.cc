@@ -125,8 +125,12 @@ llvm::Value *IRGenerator::visit(const FunDecl &decl) {
 }
 
 llvm::Value *IRGenerator::visit(const Identifier &id) {
-  const VarDecl * decl = &id.get_decl().get();
-  return Builder.CreateLoad(allocations[decl]);
+  llvm::Type * type = llvm_type(id.get_type());
+  llvm::Value * value = address_of(id);
+  llvm::Value * pointer = Builder.CreatePointerCast(value,type);
+
+  return Builder.CreateLoad(type,pointer,id.name.get());
+
 }
 
 llvm::Value *IRGenerator::visit(const FunCall &call) {
