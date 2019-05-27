@@ -90,12 +90,14 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
 }
 
 llvm::Value *IRGenerator::visit(const VarDecl &decl) {
-  llvm::Value * value = decl.get_expr()->accept(*this);
+  llvm::Value * pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
 
+  llvm::Value * value = decl.get_expr()->accept(*this);
   allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,value));
   if (decl.get_escapes())
     frame_position.insert(std::pair<const VarDecl *, int>(&decl,decl.depth));
-  llvm::Value pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
+    
+  Builder.CreateStore(value,pointer);
 }
 
 llvm::Value *IRGenerator::visit(const FunDecl &decl) {
