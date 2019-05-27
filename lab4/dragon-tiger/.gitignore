@@ -17,3 +17,5 @@ src/parser/bison-graph.gv
 src/parser/bison-report.txt
 src/driver/dtiger
 
+.gitignore
+.vscode
