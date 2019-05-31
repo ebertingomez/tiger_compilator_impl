@@ -117,7 +117,7 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
     return nullptr;
   
   llvm::Type * type = llvm_type(ite.get_type());
-  return Builder.CreateLoad(type,pointer);
+  return Builder.CreateLoad(llvm_type(ite.get_type()),pointer);
 }
 
 llvm::Value *IRGenerator::visit(const VarDecl &decl) {
@@ -193,7 +193,25 @@ llvm::Value *IRGenerator::visit(const FunCall &call) {
 }
 
 llvm::Value *IRGenerator::visit(const WhileLoop &loop) {
-  UNIMPLEMENTED();
+  llvm::BasicBlock *const test_block =
+      llvm::BasicBlock::Create(Context, "while_test", current_function);
+  llvm::BasicBlock *const body_block =
+      llvm::BasicBlock::Create(Context, "while_body", current_function);
+  llvm::BasicBlock *const end_block =
+      llvm::BasicBlock::Create(Context, "while_end", current_function);
+
+  Builder.CreateBr(test_block);
+  Builder.SetInsertPoint(test_block);
+  llvm::Value * cond_value = loop.get_condition().accept(*this);
+  Builder.CreateCondBr(Builder.CreateICmpNE(cond_value,Builder.getInt32(0)),
+                       body_block, end_block);
+  
+  Builder.SetInsertPoint(body_block);
+  loop.get_body().accept(*this);
+  Builder.CreateBr(test_block);
+
+  Builder.SetInsertPoint(end_block);
+  return nullptr;
 }
 
 llvm::Value *IRGenerator::visit(const ForLoop &loop) {
