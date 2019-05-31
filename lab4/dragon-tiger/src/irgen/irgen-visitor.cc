@@ -82,7 +82,9 @@ llvm::Value *IRGenerator::visit(const Let &let) {
 }
 
 llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
-  llvm::Value * pointer = alloca_in_entry(llvm_type(ite.get_type()),"if_result");
+  llvm::Value * pointer;
+  if (ite.get_type()!=t_void)
+    pointer = alloca_in_entry(llvm_type(ite.get_type()),"if_result");
 
   llvm::BasicBlock *const if_then =
       llvm::BasicBlock::Create(Context, "if_then", current_function);
@@ -99,12 +101,14 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   llvm::Value * value;
   Builder.SetInsertPoint(if_then);
   value = ite.get_then_part().accept(*this);
-  Builder.CreateStore(value, pointer);
+  if (ite.get_type()!=t_void)
+    Builder.CreateStore(value, pointer);
   Builder.CreateBr(if_end);
 
   Builder.SetInsertPoint(if_else);
   value = ite.get_else_part().accept(*this);
-  Builder.CreateStore(value, pointer);
+  if (ite.get_type()!=t_void)
+    Builder.CreateStore(value, pointer);
   Builder.CreateBr(if_end);
 
   Builder.SetInsertPoint(if_end);
@@ -114,7 +118,6 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   
   llvm::Type * type = llvm_type(ite.get_type());
   return Builder.CreateLoad(type,pointer);
-
 }
 
 llvm::Value *IRGenerator::visit(const VarDecl &decl) {
