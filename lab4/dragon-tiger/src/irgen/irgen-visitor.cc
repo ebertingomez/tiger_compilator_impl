@@ -98,12 +98,12 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   
   llvm::Value * value;
   Builder.SetInsertPoint(if_then);
-  value = ite.get_else_part().accept(*this);
+  value = ite.get_then_part().accept(*this);
   Builder.CreateStore(value, pointer);
   Builder.CreateBr(if_end);
 
   Builder.SetInsertPoint(if_else);
-  value = ite.get_then_part().accept(*this);
+  value = ite.get_else_part().accept(*this);
   Builder.CreateStore(value, pointer);
   Builder.CreateBr(if_end);
 
