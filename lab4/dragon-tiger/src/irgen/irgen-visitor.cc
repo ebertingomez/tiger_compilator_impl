@@ -91,7 +91,7 @@ llvm::Value *IRGenerator::visit(const VarDecl &decl) {
   llvm::Value * value = decl.get_expr()->accept(*this);
 
   if (value != nullptr) {
-      allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,value));
+      allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,pointer));
       if (decl.get_escapes())
         frame_position.insert(std::pair<const VarDecl *, int>(&decl,decl.depth));
   
@@ -126,11 +126,11 @@ llvm::Value *IRGenerator::visit(const FunDecl &decl) {
 
 llvm::Value *IRGenerator::visit(const Identifier &id) {
   llvm::Type * type = llvm_type(id.get_type());
-  llvm::Value * value = address_of(id);
-  llvm::Value * pointer = Builder.CreatePointerCast(value,type);
+  llvm::Value * pointer = address_of(id);
   
-  Builder.CreateLoad(type,pointer,id.name.get());
-  return value;
+  llvm::Value * ident = Builder.CreateLoad(type,pointer,id.name.get());
+  
+  return ident;
 
 }
 
