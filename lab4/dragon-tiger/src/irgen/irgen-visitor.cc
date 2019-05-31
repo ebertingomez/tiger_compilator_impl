@@ -91,10 +91,10 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   llvm::BasicBlock *const if_end =
       llvm::BasicBlock::Create(Context, "if_end", current_function);
 
-  llvm::Value * cond = ite.get_condition().accept(*this);
+  llvm::Value * cond_value = ite.get_condition().accept(*this);
+  llvm::Value * cond = Builder.CreateICmpNE(cond_value,Builder.getInt32(0));
 
-  Builder.CreateCondBr(Builder.CreateICmpNE(cond,Builder.getInt32(0)),
-                      if_then,if_else);
+  Builder.CreateCondBr(cond,if_then,if_else);
   
   llvm::Value * value;
   Builder.SetInsertPoint(if_then);
