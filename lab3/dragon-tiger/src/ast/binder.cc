@@ -225,25 +225,25 @@ void Binder::visit(FunCall &call) {
 
 void Binder::visit(WhileLoop &loop) {
   bool was_loop = is_loop_body;
-  is_loop_body = false;
+  is_loop_body = (was_loop) ? true : false;
   loop.get_condition().accept(*this);
   loops.push_back(&loop);
   is_loop_body = true;
   loop.get_body().accept(*this);
-  is_loop_body = was_loop;
+  is_loop_body = (was_loop) ? true : false;
   loops.pop_back();
 }
 
 void Binder::visit(ForLoop &loop) {
   bool was_loop = is_loop_body;
-  is_loop_body = false;
+  is_loop_body = (was_loop) ? true : false;
   push_scope();
   loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
   is_loop_body = true;
   loops.push_back(&loop);
   loop.get_body().accept(*this);
-  is_loop_body = was_loop;
+  is_loop_body = (was_loop) ? true : false;
   loops.pop_back();
   pop_scope();
 }
