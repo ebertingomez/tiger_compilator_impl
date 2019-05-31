@@ -190,13 +190,9 @@ llvm::Value *IRGenerator::visit(const ForLoop &loop) {
 
 llvm::Value *IRGenerator::visit(const Assign &assign) {
   llvm::Value * value = assign.get_rhs().accept(*this);
-
   if (value != nullptr) {
       Builder.CreateStore(value,address_of(assign.get_lhs()));
   }
-
-  assign.get_lhs().accept(*this);
-  
   return nullptr;
 }
 
