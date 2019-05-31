@@ -108,6 +108,9 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   Builder.CreateBr(if_end);
 
   Builder.SetInsertPoint(if_end);
+
+  if (ite.get_type()==t_void)
+    return nullptr;
   llvm::Type * type = llvm_type(ite.get_type());
   return Builder.CreateLoad(type,pointer,"");
 
