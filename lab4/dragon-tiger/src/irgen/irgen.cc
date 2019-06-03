@@ -47,7 +47,15 @@ void IRGenerator::print_ir(std::ostream *ostream) {
 llvm::Value *IRGenerator::address_of(const Identifier &id) {
   assert(id.get_decl());
   const VarDecl &decl = dynamic_cast<const VarDecl &>(id.get_decl().get());
-  return allocations[&decl];
+  int depth_diff = id.get_depth() - decl.get_depth();
+  if (depth_diff==0)
+    return allocations[&decl];
+  else{
+    std::pair<llvm::StructType *, llvm::Value *> pair = frame_up(depth_diff);
+    llvm::StructType * st = pair.first;
+    int position = frame_position[&id.get_decl().get()];
+    return Builder.CreateStructGEP(st->getPointerTo(),(llvm::Value *)st, position );
+  }
 }
 
 void IRGenerator::generate_program(FunDecl *main) {
@@ -81,10 +89,11 @@ void IRGenerator::generate_function(const FunDecl &decl) {
 
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
+  
   unsigned i = 0;
   for (auto &arg : current_function->args()) {
     arg.setName(params[i]->name.get());
-    llvm::Value *const shadow = alloca_in_entry(llvm_type(params[i]->get_type()), params[i]->name.get());
+    llvm::Value *const shadow = generate_vardecl(*params[i]);
     Builder.CreateStore(&arg, shadow);
     i++;
   }
@@ -153,7 +162,7 @@ llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
   }
   else
     pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
-    
+
   allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,pointer));
 
   return pointer;
