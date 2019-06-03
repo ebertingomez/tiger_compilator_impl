@@ -67,7 +67,7 @@ class IRGenerator : public ConstASTValueVisitor {
 
   std::pair<llvm::StructType *, llvm::Value *> frame_up(int levels);
 
-  llvm::Value *IRGenerator::generate_vardecl(const VarDecl &decl);
+  llvm::Value *generate_vardecl(const VarDecl &decl);
 
   // Return the LLVM type corresponding to a Tiger type.
   llvm::Type *llvm_type(const ast::Type);
