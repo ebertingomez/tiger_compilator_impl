@@ -106,4 +106,57 @@ void IRGenerator::generate_function(const FunDecl &decl) {
   llvm::verifyFunction(*current_function);
 }
 
+void IRGenerator::generate_frame(){
+  std::vector<llvm::Type *> types;
+  if (current_function_decl->get_parent()){
+    const llvm::StructType * parent_struc = frame_type[&current_function_decl->get_parent().get()];
+    types.push_back(parent_struc->getPointerTo());
+  }
+  for (const VarDecl * var : current_function_decl->get_escaping_decls()){
+    types.push_back(llvm_type(var->get_type()));
+  }
+  std::string name = "ft_"+current_function_decl->get_external_name().get();
+  llvm::StructType * struct_type = llvm::StructType::create(Context,types,name);
+  frame_type.insert(std::pair<const FunDecl *, llvm::StructType *>(current_function_decl,struct_type));
+  frame = Builder.CreateAlloca(struct_type,nullptr,name);
+}
+
+std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
+  const FunDecl * fun = current_function_decl;
+  llvm::Value * sl = frame;
+  for (int i=0; i<levels;i++){
+    if (!fun->get_parent())
+      break;
+    sl = Builder.CreateStructGEP((llvm::StructType *)frame_type[fun]->getPointerTo(),
+                                (llvm::Value *)frame_type[fun], 0 );
+    fun = &fun->get_parent().get();
+
+  }
+  return std::pair<llvm::StructType *, llvm::Value *>(frame_type[fun],sl);
+}
+
+llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
+  llvm::Value * pointer;
+  if (decl.get_escapes()){
+    int position = 0;
+    for (const VarDecl * v : current_function_decl->get_escaping_decls()){
+      if (v->name.get() == decl.name.get())
+        break;
+      position++;
+    }
+    if (current_function_decl->get_parent())
+      position++;
+    frame_position.insert(std::pair<const VarDecl *, int>(&decl,position));
+    pointer = Builder.CreateStructGEP(
+              (llvm::StructType *)frame_type[current_function_decl]->getPointerTo(),
+              (llvm::Value *)frame_type[current_function_decl], position );
+  }
+  else
+    pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
+    
+  allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,pointer));
+
+  return pointer;
+}
+
 } // namespace irgen
