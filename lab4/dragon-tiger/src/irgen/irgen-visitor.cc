@@ -6,12 +6,6 @@
 
 namespace {
 
-// This function can be removed once the lab has been fully implemented.
-[[noreturn]] void UNIMPLEMENTED() {
-  std::cerr << "Error: unimplemented feature\n";
-  exit(1);
-}
-
 } // namespace
 
 namespace irgen {
