@@ -86,7 +86,6 @@ void IRGenerator::generate_function(const FunDecl &decl) {
       llvm::BasicBlock::Create(Context, "body", current_function);
 
   Builder.SetInsertPoint(bb2);
-  generate_frame();
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
 
@@ -109,6 +108,7 @@ void IRGenerator::generate_function(const FunDecl &decl) {
 
   // Jump from entry to body
   Builder.SetInsertPoint(bb1);
+  generate_frame();
   Builder.CreateBr(bb2);
 
   // Validate the generated code, checking for consistency.
