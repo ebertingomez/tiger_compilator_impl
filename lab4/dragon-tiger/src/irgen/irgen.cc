@@ -86,10 +86,10 @@ void IRGenerator::generate_function(const FunDecl &decl) {
       llvm::BasicBlock::Create(Context, "body", current_function);
 
   Builder.SetInsertPoint(bb2);
-
+  generate_frame();
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
-  
+
   unsigned i = 0;
   for (auto &arg : current_function->args()) {
     arg.setName(params[i]->name.get());
