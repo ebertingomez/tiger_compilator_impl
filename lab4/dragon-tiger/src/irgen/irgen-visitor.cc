@@ -242,6 +242,7 @@ llvm::Value *IRGenerator::visit(const ForLoop &loop) {
 llvm::Value *IRGenerator::visit(const Break &b) {
   llvm::BasicBlock * exit_block = loop_exit_bbs[b.get_loop().get_ptr()];
   Builder.CreateBr(exit_block);
+  return nullptr;
 }
 
 llvm::Value *IRGenerator::visit(const Assign &assign) {
