@@ -87,12 +87,18 @@ void IRGenerator::generate_function(const FunDecl &decl) {
 
   Builder.SetInsertPoint(bb2);
   generate_frame();
+
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
 
   unsigned i = 0;
   for (auto &arg : current_function->args()) {
+    if (!decl.is_external && i==0){
+      Builder.CreateStore(frame,&arg);
+      continue;
+    }
     arg.setName(params[i]->name.get());
+    
     llvm::Value *const shadow = generate_vardecl(*params[i]);
     Builder.CreateStore(&arg, shadow);
     i++;

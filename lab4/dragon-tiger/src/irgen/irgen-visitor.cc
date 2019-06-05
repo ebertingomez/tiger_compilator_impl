@@ -129,7 +129,6 @@ llvm::Value *IRGenerator::visit(const FunDecl &decl) {
   for (auto param_decl : decl.get_params()) {
     param_types.push_back(llvm_type(param_decl->get_type()));
   }
-
   llvm::Type *return_type = llvm_type(decl.get_type());
 
   llvm::FunctionType *ft =
@@ -142,7 +141,6 @@ llvm::Value *IRGenerator::visit(const FunDecl &decl) {
 
   if (decl.get_expr())
     pending_func_bodies.push_front(&decl);
-
   return nullptr;
 }
 
