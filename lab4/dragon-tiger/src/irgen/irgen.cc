@@ -54,7 +54,7 @@ llvm::Value *IRGenerator::address_of(const Identifier &id) {
     std::pair<llvm::StructType *, llvm::Value *> pair = frame_up(depth_diff);
     llvm::StructType * st = pair.first;
     int position = frame_position[&id.get_decl().get()];
-    return Builder.CreateStructGEP(st->getPointerTo(),(llvm::Value *)st, position );
+    return Builder.CreateStructGEP(st,(llvm::Value *)st, position );
   }
 }
 
@@ -132,7 +132,8 @@ void IRGenerator::generate_frame(){
   std::string name = "ft_"+current_function_decl->get_external_name().get();
   llvm::StructType * struct_type = llvm::StructType::create(Context,types,name);
   frame_type.insert(std::pair<const FunDecl *, llvm::StructType *>(current_function_decl,struct_type));
-  frame = Builder.CreateAlloca(struct_type,nullptr);
+  frame = Builder.CreateAlloca(struct_type,nullptr,name);
+  
 }
 
 std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
@@ -141,8 +142,8 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   for (int i=0; i<levels;i++){
     if (!fun->get_parent())
       break;
-    sl = Builder.CreateStructGEP((llvm::StructType *)frame_type[fun]->getPointerTo(),
-                                (llvm::Value *)frame_type[fun], 0 );
+    sl = Builder.CreateStructGEP(frame_type[fun],
+                                sl, 0 );
     fun = &fun->get_parent().get();
 
   }
@@ -152,7 +153,7 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
 llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
   llvm::Value * pointer;
   if (decl.get_escapes()){
-    int position = 0;
+    unsigned int position = 0;
     for (const VarDecl * v : current_function_decl->get_escaping_decls()){
       if (v->name.get() == decl.name.get())
         break;
@@ -164,17 +165,15 @@ llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
     frame_position.insert(std::pair<const VarDecl *, int>(&decl,position));
 
     
-    std::cout<<decl.name.get()<<std::endl;
     pointer = Builder.CreateStructGEP(
-              (llvm::StructType *)frame_type[current_function_decl]->getPointerTo(),
-              frame, position);
-    std::cout<<decl.name.get()<<std::endl;
+              frame_type[current_function_decl],
+              frame, position,frame->getName());
   }
   else
     pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
 
   allocations.insert(std::pair<const VarDecl *, llvm::Value *>(&decl,pointer));
-
+  
   return pointer;
 }
 
