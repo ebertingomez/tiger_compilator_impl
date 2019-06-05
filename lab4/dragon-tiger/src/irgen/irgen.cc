@@ -164,11 +164,11 @@ llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
     frame_position.insert(std::pair<const VarDecl *, int>(&decl,position));
 
     
-    //std::cout<<decl.name.get()<<std::endl;
+    std::cout<<decl.name.get()<<std::endl;
     pointer = Builder.CreateStructGEP(
               (llvm::StructType *)frame_type[current_function_decl]->getPointerTo(),
-              (llvm::Value *)frame_type[current_function_decl], 2 );
-    //std::cout<<decl.name.get()<<std::endl;
+              frame, position);
+    std::cout<<decl.name.get()<<std::endl;
   }
   else
     pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
