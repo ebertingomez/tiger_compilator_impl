@@ -167,7 +167,7 @@ llvm::Value *IRGenerator::visit(const FunCall &call) {
   }
 
   std::vector<llvm::Value *> args_values;
-  /*
+  
   if (call.get_decl()){
     if (!call.get_decl().get().is_external){
       int depth_diff = call.get_depth() - call.get_decl().get().depth;
@@ -175,7 +175,7 @@ llvm::Value *IRGenerator::visit(const FunCall &call) {
       args_values.push_back(v);
     }
   }    
-  */
+  
   for (auto expr : call.get_args()) {
     args_values.push_back(expr->accept(*this));
   }
