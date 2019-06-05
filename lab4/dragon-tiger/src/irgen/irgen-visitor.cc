@@ -114,13 +114,12 @@ llvm::Value *IRGenerator::visit(const VarDecl &decl) {
   llvm::Value * value = decl.get_expr()->accept(*this);
   if (value != nullptr)
     Builder.CreateStore(value,pointer);
-
   return nullptr;
 }
 
 llvm::Value *IRGenerator::visit(const FunDecl &decl) {
   std::vector<llvm::Type *> param_types;
-  
+
   if (!decl.is_external && decl.get_parent()){
     llvm::StructType * parent_struc = frame_type[&decl.get_parent().get()];
     param_types.push_back(parent_struc->getPointerTo());
