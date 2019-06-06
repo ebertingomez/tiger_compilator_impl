@@ -55,7 +55,7 @@ llvm::Value *IRGenerator::address_of(const Identifier &id) {
     std::pair<llvm::StructType *, llvm::Value *> pair = frame_up(depth_diff);
     int position = frame_position[&id.get_decl().get()];
 
-    return Builder.CreateStructGEP(pair.first,pair.second, position );
+    return Builder.CreateStructGEP(pair.first,pair.second, position);
   }
 }
 
