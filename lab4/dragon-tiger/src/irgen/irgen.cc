@@ -48,13 +48,14 @@ llvm::Value *IRGenerator::address_of(const Identifier &id) {
   assert(id.get_decl());
   const VarDecl &decl = dynamic_cast<const VarDecl &>(id.get_decl().get());
   int depth_diff = id.get_depth() - decl.get_depth();
+
   if (depth_diff==0)
     return allocations[&decl];
   else{
     std::pair<llvm::StructType *, llvm::Value *> pair = frame_up(depth_diff);
-    llvm::StructType * st = pair.first;
     int position = frame_position[&id.get_decl().get()];
-    return Builder.CreateStructGEP(st,(llvm::Value *)st, position );
+
+    return Builder.CreateStructGEP(pair.first,pair.second, position );
   }
 }
 
@@ -87,10 +88,10 @@ void IRGenerator::generate_function(const FunDecl &decl) {
 
   Builder.SetInsertPoint(bb2);
   generate_frame();
-
+  
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
-
+  
   unsigned i = 0;
   for (auto &arg : current_function->args()) {
     if (!decl.is_external && i==0){
@@ -102,7 +103,7 @@ void IRGenerator::generate_function(const FunDecl &decl) {
     Builder.CreateStore(&arg, shadow);
     i++;
   }
-
+  
   // Visit the body
   llvm::Value *expr = decl.get_expr()->accept(*this);
 
@@ -118,6 +119,7 @@ void IRGenerator::generate_function(const FunDecl &decl) {
 
   // Validate the generated code, checking for consistency.
   llvm::verifyFunction(*current_function);
+  
 }
 
 void IRGenerator::generate_frame(){
@@ -142,8 +144,8 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   for (int i=0; i<levels;i++){
     if (!fun->get_parent())
       break;
-    sl = Builder.CreateStructGEP(frame_type[fun],
-                                sl, 0 );
+    sl = Builder.CreateStructGEP(frame_type[fun],sl, 0 );
+    sl = Builder.CreateLoad(sl);
     fun = &fun->get_parent().get();
 
   }
