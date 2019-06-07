@@ -91,16 +91,19 @@ void IRGenerator::generate_function(const FunDecl &decl) {
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
   
-  unsigned i = 0;
+  unsigned  i = 0;
+  bool      first = true;
   for (auto &arg : current_function->args()) {
-    if (!decl.is_external && i==0){
+    if (!decl.is_external && i==0 && first){
       llvm::Value * pointer = Builder.CreateStructGEP(
               frame_type[current_function_decl],
               frame, 0);
       Builder.CreateStore(&arg,pointer);
+      first = false;
       continue;
     }
     arg.setName(params[i]->name.get());
+
     llvm::Value *const shadow = generate_vardecl(*params[i]);
     Builder.CreateStore(&arg, shadow);
     i++;
@@ -147,7 +150,7 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
     if (!fun->get_parent())
       break;
     sl = Builder.CreateStructGEP(frame_type[fun],sl, 0);
-    //sl = Builder.CreateLoad(sl);
+    sl = Builder.CreateLoad(sl);
     fun = &fun->get_parent().get();
 
   }
@@ -165,13 +168,12 @@ llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
     }
     if (current_function_decl->get_parent())
       position++;
-    
     frame_position.insert(std::pair<const VarDecl *, int>(&decl,position));
 
     
     pointer = Builder.CreateStructGEP(
               frame_type[current_function_decl],
-              frame, position,frame->getName());
+              frame, position);
   }
   else
     pointer = alloca_in_entry(llvm_type(decl.get_type()),decl.name.get());
