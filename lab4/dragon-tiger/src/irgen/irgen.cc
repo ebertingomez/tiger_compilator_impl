@@ -55,7 +55,7 @@ llvm::Value *IRGenerator::address_of(const Identifier &id) {
     std::pair<llvm::StructType *, llvm::Value *> pair = frame_up(depth_diff);
     int position = frame_position[&id.get_decl().get()];
 
-    return Builder.CreateStructGEP(pair.first,pair.second, position);
+    return Builder.CreateStructGEP(pair.first,pair.second, position,id.name.get());
   }
 }
 
@@ -81,21 +81,23 @@ void IRGenerator::generate_function(const FunDecl &decl) {
   // Create a new basic block to insert allocation insertion
   llvm::BasicBlock *bb1 =
       llvm::BasicBlock::Create(Context, "entry", current_function);
-
+  
   // Create a second basic block for body insertion
   llvm::BasicBlock *bb2 =
       llvm::BasicBlock::Create(Context, "body", current_function);
-
+  
   Builder.SetInsertPoint(bb2);
   generate_frame();
-  
   // Set the name for each argument and register it in the allocations map
   // after storing it in an alloca.
   
   unsigned i = 0;
   for (auto &arg : current_function->args()) {
     if (!decl.is_external && i==0){
-      Builder.CreateStore(frame,&arg);
+      llvm::Value * pointer = Builder.CreateStructGEP(
+              frame_type[current_function_decl],
+              frame, 0);
+      Builder.CreateStore(&arg,pointer);
       continue;
     }
     arg.setName(params[i]->name.get());
@@ -144,8 +146,8 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   for (int i=0; i<levels;i++){
     if (!fun->get_parent())
       break;
-    sl = Builder.CreateStructGEP(frame_type[fun],sl, 0 );
-    sl = Builder.CreateLoad(sl);
+    sl = Builder.CreateStructGEP(frame_type[fun],sl, 0);
+    //sl = Builder.CreateLoad(sl);
     fun = &fun->get_parent().get();
 
   }

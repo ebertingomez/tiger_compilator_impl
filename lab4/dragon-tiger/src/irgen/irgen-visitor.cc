@@ -122,7 +122,7 @@ llvm::Value *IRGenerator::visit(const FunDecl &decl) {
 
   if (!decl.is_external && decl.get_parent()){
     llvm::StructType * parent_struc = frame_type[&decl.get_parent().get()];
-    param_types.push_back(parent_struc->getPointerTo());
+    param_types.push_back(parent_struc);
   }
   
   for (auto param_decl : decl.get_params()) {
