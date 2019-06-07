@@ -48,7 +48,9 @@ llvm::Value *IRGenerator::address_of(const Identifier &id) {
   assert(id.get_decl());
   const VarDecl &decl = dynamic_cast<const VarDecl &>(id.get_decl().get());
   int depth_diff = id.get_depth() - decl.get_depth();
-
+  // Check if there is any depth difference to look for the var
+  // definition in another frame if there is or to look for the
+  // definition in the current frame
   if (depth_diff==0)
     return allocations[&decl];
   else{
@@ -129,13 +131,17 @@ void IRGenerator::generate_function(const FunDecl &decl) {
 
 void IRGenerator::generate_frame(){
   std::vector<llvm::Type *> types;
+  // If the current function has a parent, the push the his frame onto the first field of the frame
   if (current_function_decl->get_parent()){
-    const llvm::StructType * parent_struc = frame_type[&current_function_decl->get_parent().get()];
+    const llvm::StructType * parent_struc = 
+                        frame_type[&current_function_decl->get_parent().get()];
     types.push_back(parent_struc->getPointerTo());
   }
+  // We store all the escaping declartion in the frame type
   for (const VarDecl * var : current_function_decl->get_escaping_decls()){
     types.push_back(llvm_type(var->get_type()));
   }
+  // We create the structure, store it and create a frame with this type.
   std::string name = "ft_"+current_function_decl->get_external_name().get();
   llvm::StructType * struct_type = llvm::StructType::create(Context,types,name);
   frame_type.insert(std::pair<const FunDecl *, llvm::StructType *>(current_function_decl,struct_type));
@@ -146,7 +152,9 @@ void IRGenerator::generate_frame(){
 std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   const FunDecl * fun = current_function_decl;
   llvm::Value * sl = frame;
+  // We load the parent's frame and update the function declaration
   for (int i=0; i<levels;i++){
+    // If the function does not have a parent, we stop
     if (!fun->get_parent())
       break;
     sl = Builder.CreateStructGEP(frame_type[fun],sl, 0);
@@ -159,6 +167,8 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
 
 llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
   llvm::Value * pointer;
+  // If the function escapes, we store it in the frame after computing
+  // its position with respect to other escaping variables
   if (decl.get_escapes()){
     unsigned int position = 0;
     for (const VarDecl * v : current_function_decl->get_escaping_decls()){
@@ -169,7 +179,6 @@ llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
     if (current_function_decl->get_parent())
       position++;
     frame_position.insert(std::pair<const VarDecl *, int>(&decl,position));
-
     
     pointer = Builder.CreateStructGEP(
               frame_type[current_function_decl],
