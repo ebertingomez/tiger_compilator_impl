@@ -75,7 +75,7 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   llvm::Value * pointer;
   if (ite.get_type()!=t_void)
     pointer = alloca_in_entry(llvm_type(ite.get_type()),"if_result");
-
+  // Creation of the block and the condition
   llvm::BasicBlock *const if_then =
       llvm::BasicBlock::Create(Context, "if_then", current_function);
   llvm::BasicBlock *const if_else =
@@ -85,7 +85,7 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
 
   llvm::Value * cond_value = ite.get_condition().accept(*this);
   llvm::Value * cond = Builder.CreateICmpNE(cond_value,Builder.getInt32(0));
-
+  // If the condition is verified, we go to the if_then block, otherwise to the if_else one
   Builder.CreateCondBr(cond,if_then,if_else);
   
   llvm::Value * value;
@@ -100,7 +100,8 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   if (ite.get_type()!=t_void)
     Builder.CreateStore(value, pointer);
   Builder.CreateBr(if_end);
-
+  
+  // To the end ifthenelse segment after executing the precedent blocks
   Builder.SetInsertPoint(if_end);
 
   if (ite.get_type()==t_void)
@@ -119,7 +120,9 @@ llvm::Value *IRGenerator::visit(const VarDecl &decl) {
 
 llvm::Value *IRGenerator::visit(const FunDecl &decl) {
   std::vector<llvm::Type *> param_types;
-
+  
+  // If the function is internal and has a parent, we store a pointer to the
+  //  parent's frame in the first position of the current frame
   if (!decl.is_external && decl.get_parent()){
     llvm::StructType * parent_struc = frame_type[&decl.get_parent().get()];
     param_types.push_back(parent_struc->getPointerTo());
@@ -166,6 +169,7 @@ llvm::Value *IRGenerator::visit(const FunCall &call) {
 
   std::vector<llvm::Value *> args_values;
   
+  // If the call function declaration is internal and is in another frame, we look for it
   if (call.get_decl()){
     if (!call.get_decl().get().is_external){
       int depth_diff = call.get_depth() - call.get_decl().get().depth;
@@ -186,6 +190,7 @@ llvm::Value *IRGenerator::visit(const FunCall &call) {
 }
 
 llvm::Value *IRGenerator::visit(const WhileLoop &loop) {
+  // Creation the the blocks and of the condition
   llvm::BasicBlock *const test_block =
       llvm::BasicBlock::Create(Context, "while_test", current_function);
   llvm::BasicBlock *const body_block =
@@ -196,6 +201,7 @@ llvm::Value *IRGenerator::visit(const WhileLoop &loop) {
   Builder.CreateBr(test_block);
   loop_exit_bbs.insert(std::pair<const Loop *, llvm::BasicBlock *>(&loop,end_block));
 
+  // We test the condition in each iteration via this block.
   Builder.SetInsertPoint(test_block);
   llvm::Value * cond_value = loop.get_condition().accept(*this);
   Builder.CreateCondBr(Builder.CreateICmpNE(cond_value,Builder.getInt32(0)),
@@ -203,6 +209,7 @@ llvm::Value *IRGenerator::visit(const WhileLoop &loop) {
   
   Builder.SetInsertPoint(body_block);
   loop.get_body().accept(*this);
+  // After jumping to the body and executing it. we go back to the test block
   Builder.CreateBr(test_block);
 
   Builder.SetInsertPoint(end_block);
