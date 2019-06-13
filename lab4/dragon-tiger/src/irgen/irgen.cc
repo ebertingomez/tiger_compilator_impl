@@ -144,7 +144,7 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   for (int i=0; i<levels;i++){
     if (!fun->get_parent())
       break;
-    sl = Builder.CreateStructGEP(frame_type[fun],sl, 0 );
+    sl = Builder.CreateStructGEP(frame_type[fun],sl, 0,sl->getName());
     sl = Builder.CreateLoad(sl);
     fun = &fun->get_parent().get();
 
@@ -179,4 +179,4 @@ llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
   return pointer;
 }
 
-} // namespace irgen
+} // namespace irgen 
