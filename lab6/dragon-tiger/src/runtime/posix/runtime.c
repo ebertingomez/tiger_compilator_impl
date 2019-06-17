@@ -72,7 +72,10 @@ const char *__chr(int32_t i) {
 }
 
 int32_t __size(const char *s) {
-  error("UNIMPLEMENTED __size");
+  int size = 0;
+  while (s[0] != '\0')
+    size++;
+  return size;
 }
 
 const char *__substring(const char *s, int32_t first, int32_t length) {
