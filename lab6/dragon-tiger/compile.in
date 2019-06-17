@@ -1,0 +1,39 @@
+#! /bin/sh 
+#
+# Compile a tiger program into an executable.
+#
+# The executable will be named "a.out" in the current directory.
+
+AS="@CCAS@"
+CC="@CC@"
+LLC="@LLVM_LLC@"
+OPT="@LLVM_OPT@"
+
+tmp=$(mktemp)
+
+usage() {
+  echo "Compile a tiger program into an executable." 1>&2
+  echo 1>&2
+  echo "Usage: $(basename $0) file.tig" 1>&2
+  echo "    or $(basename $0) -" 1 >&2
+  exit 1
+}
+
+cleanup() {
+  rm -f "$tmp.s" "$tmp.o"
+}
+
+set -e
+trap cleanup 0 1 2 3 5 15
+
+if [ $# != 1 ]; then
+  usage
+fi
+
+input="$1"
+
+"$(dirname "$0")"/src/driver/dtiger -i --dump-ir "$input" | $OPT -O3 | $LLC -O3 -relocation-model=pic -o "$tmp.s"
+$AS -c -o "$tmp.o" "$tmp.s"
+$CC -O3 -Wno-override-module -Wl,--gc-sections -o a.out "$tmp.o" src/runtime/posix/libruntime.a
+
+# ex: filetype=sh
