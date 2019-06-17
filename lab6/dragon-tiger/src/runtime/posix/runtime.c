@@ -31,9 +31,12 @@ void __flush(void) {
 const char *__getchar(void) {
   char c = getchar();
   char * s;
-  if (c == EOF)
+  if (c == EOF){
+    s = (char *) malloc(sizeof(char));
     s[0] = '\0';
+  }
   else{
+    s = (char *) malloc(2*sizeof(char));
     s[0] = c;
     s[1] = '\0';
   }
