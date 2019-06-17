@@ -47,7 +47,9 @@ int32_t __ord(const char *s) {
   char a = s[0];
   if (s[0] == '\0')
     return -1;
-  return (int)a;
+  if (a<0)
+    exit(EXIT_FAILURE);
+  return a;
 }
 
 const char *__chr(int32_t i) {
