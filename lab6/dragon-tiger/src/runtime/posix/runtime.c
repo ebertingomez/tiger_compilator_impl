@@ -116,7 +116,7 @@ int32_t __strcmp(const char *s1, const char *s2) {
 }
 
 int32_t __streq(const char *s1, const char *s2) {
-  return (strcmp(s1,s2) == 0) ? 1 : 0;
+  return (strcmp(s1,s2) == 0) ? 0 : 1;
 }
 
 int32_t __not(int32_t i) {
