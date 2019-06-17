@@ -87,7 +87,7 @@ const char *__substring(const char *s, int32_t first, int32_t length) {
   char * new_s = (char *) malloc((length+1)*sizeof(char));
 
   for (int i = 0; i< length ; i++)
-    new_s = s[first + i];
+    new_s[i] = s[first + i];
   
   new_s[length] = '\0';
 
@@ -101,10 +101,10 @@ const char *__concat(const char *s1, const char *s2) {
   char * s = (char *) malloc((size1+size2+1)*sizeof(char));
 
   for (int i = 0; i< size1 ; i++)
-    s = s1[i];
+    s[i] = s1[i];
   
   for (int i = 0; i< size2 ; i++)
-    s = s2[size1 + i];
+    s[size1 + i] = s2[i];
 
   s[size1 + size2] = '\0';
 
