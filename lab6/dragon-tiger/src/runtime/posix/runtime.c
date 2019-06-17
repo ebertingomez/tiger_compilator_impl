@@ -89,7 +89,7 @@ const char *__substring(const char *s, int32_t first, int32_t length) {
   for (int i = 0; i< length ; i++)
     new_s = s[first + i];
   
-  new_s[first + length] = '\0';
+  new_s[length] = '\0';
 
   return new_s;
 }
