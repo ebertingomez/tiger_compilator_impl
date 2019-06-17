@@ -27,7 +27,13 @@ void __flush(void) {
 }
 
 const char *__getchar(void) {
-  error("UNIMPLEMENTED __getchar");
+  char a = getchar();
+  char * s;
+  if (a == EOF)
+    s = '\0';
+  else
+    s = &a;
+  return s;
 }
 
 int32_t __ord(const char *s) {
@@ -63,5 +69,5 @@ int32_t __not(int32_t i) {
 }
 
 void __exit(int32_t c) {
-  error("UNIMPLEMENTED __exit");
+  exit(c);
 }
