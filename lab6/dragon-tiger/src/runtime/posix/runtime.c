@@ -44,11 +44,9 @@ const char *__getchar(void) {
 }
 
 int32_t __ord(const char *s) {
-  char a = s[0];
+  unsigned char a = s[0];
   if (s[0] == '\0')
     return -1;
-  if (a<0)
-    exit(EXIT_FAILURE);
   return a;
 }
 
@@ -73,7 +71,7 @@ const char *__chr(int32_t i) {
 
 int32_t __size(const char *s) {
   int size = 0;
-  while (s[0] != '\0')
+  while (s[size] != '\0')
     size++;
   return size;
 }
