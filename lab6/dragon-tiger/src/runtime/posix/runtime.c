@@ -23,7 +23,7 @@ void __print_int(const int32_t i) {
 }
 
 void __flush(void) {
-  error("UNIMPLEMENTED __flush");
+  fflush(stdout);
 }
 
 const char *__getchar(void) {
