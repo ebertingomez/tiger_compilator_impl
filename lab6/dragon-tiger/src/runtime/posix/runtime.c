@@ -112,7 +112,16 @@ const char *__concat(const char *s1, const char *s2) {
 }
 
 int32_t __strcmp(const char *s1, const char *s2) {
-  return strcmp(s1,s2);
+  int cmp = strcmp(s1,s2);
+  if (cmp == 0)
+    return 0;
+  else {
+    if (cmp > 0)
+      return 1;
+    else
+      return -1;
+  }
+  
 }
 
 int32_t __streq(const char *s1, const char *s2) {
