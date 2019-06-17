@@ -51,7 +51,22 @@ int32_t __ord(const char *s) {
 }
 
 const char *__chr(int32_t i) {
-  error("UNIMPLEMENTED __chr");
+  char * s;
+  if ( (i <  0) || (i > 255)){
+    exit(EXIT_FAILURE);
+  }
+  else {
+    if (i == 0){
+      s = (char *) malloc(sizeof(char));
+      s[0] = '\0';
+    }
+    else{
+      s = (char *) malloc(2*sizeof(char));
+      s[0] = i;
+      s[1] = '\0';
+    }
+  }
+  return s;
 }
 
 int32_t __size(const char *s) {
