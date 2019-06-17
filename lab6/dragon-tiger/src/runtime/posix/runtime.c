@@ -104,7 +104,7 @@ const char *__concat(const char *s1, const char *s2) {
     s = s1[i];
   
   for (int i = 0; i< size2 ; i++)
-    s = s[size1 + i];
+    s = s2[size1 + i];
 
   s[size1 + size2] = '\0';
 
