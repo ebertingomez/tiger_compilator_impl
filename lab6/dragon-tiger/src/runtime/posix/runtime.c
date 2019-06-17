@@ -4,6 +4,8 @@
 
 #include "runtime.h"
 
+char c;
+
 __attribute__((noreturn))
 static void error(const char *msg) {
   fprintf(stderr, "%s\n", msg);
@@ -27,12 +29,14 @@ void __flush(void) {
 }
 
 const char *__getchar(void) {
-  char a = getchar();
+  char c = getchar();
   char * s;
-  if (a == EOF)
-    s = '\0';
-  else
-    s = &a;
+  if (c == EOF)
+    s[0] = '\0';
+  else{
+    s[0] = c;
+    s[1] = '\0';
+  }
   return s;
 }
 
