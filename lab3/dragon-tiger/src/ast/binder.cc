@@ -138,12 +138,16 @@ void Binder::visit(Sequence &seq) {
   }
 }
 
-
+/* Visit a let node. First, it create a scopes, analyzes the var declarations. 
+It stores the function declarations in the current scope to avoid troubles with
+mutually recursive functions. It sets the depth of functions according to the scopes.
+Then analyzes the body sequence to check for consistency. */
 void Binder::visit(Let &let) {
   bool was_loop = is_loop_body;
   is_loop_body = false;
   push_scope();
   std::vector<FunDecl *> decls;
+
   for (auto decl : let.get_decls()) {
     FunDecl * func_decl = dynamic_cast<FunDecl *>(decl);
     if  (func_decl != nullptr){
@@ -163,11 +167,14 @@ void Binder::visit(Let &let) {
     decls.back()->accept(*this);
     decls.pop_back();
   }
+
   is_loop_body = was_loop;
   let.get_sequence().accept(*this);
   pop_scope();
 }
 
+/* Check if it exists a variable declaration with the same name and assign it
+to the identifier. Otherwise, it generates an error. It sets the depth too. */
 void Binder::visit(Identifier &id) {
   VarDecl * decl = dynamic_cast<VarDecl *>(& find(id.loc, id.name));
   if (decl == nullptr)
@@ -178,12 +185,15 @@ void Binder::visit(Identifier &id) {
     decl->set_escapes();
 }
 
+/* Check the consistency of each part of the condition */
 void Binder::visit(IfThenElse &ite) {
   ite.get_condition().accept(*this);
   ite.get_then_part().accept(*this);
   ite.get_else_part().accept(*this);
 }
 
+/* It checks consistency of the definition of the declaration if any. It sets depth and
+store it in the current scope  */
 void Binder::visit(VarDecl &decl) {
   if (auto expr = decl.get_expr()) {
     expr->accept(*this);
@@ -192,6 +202,8 @@ void Binder::visit(VarDecl &decl) {
   enter(decl);
 }
 
+/* After being stored in the current scope. It creates a new scope and check for
+consistency of its parameters and its body */
 void Binder::visit(FunDecl &decl) {
   set_parent_and_external_name(decl);
   functions.push_back(&decl);
@@ -212,13 +224,15 @@ void Binder::visit(FunDecl &decl) {
   functions.pop_back();
 }
 
+/* Checks if there is a function with the same name in the scopes. It there is one
+it is assigned to the function call. Otherwise it raises and error. It sets depth*/
 void Binder::visit(FunCall &call) {
   FunDecl * decl = dynamic_cast<FunDecl *>(& find(call.loc, call.func_name));
   if (decl == nullptr)
     error(call.loc, call.func_name.get() + " is not a function call");
   if (call.get_args().size() != decl->get_params().size())
     error(call.loc, call.func_name.get() + " : number of arguments does not match");
-  
+  /* Analysis of the arguments */
   for (auto arg : call.get_args()) {
     arg->accept(*this);
   }
@@ -226,39 +240,51 @@ void Binder::visit(FunCall &call) {
   call.set_depth(functions.size()-1);
 }
 
+/* Check for consistency of the different loop parts and indicates if
+the binder is in a loop body or not to check the consistency of an eventual break */
 void Binder::visit(WhileLoop &loop) {
   bool was_loop = is_loop_body;
   Loop * last_loop = current_loop;
   is_loop_body = (was_loop) ? true : false;
+
   loop.get_condition().accept(*this);
   current_loop = &loop;
   is_loop_body = true;
   loop.get_body().accept(*this);
+
   is_loop_body = (was_loop) ? true : false;
   current_loop = last_loop;
 }
-
+/* Creates a new scope, check for consistency of the different loop parts 
+and indicates if the binder is in a loop body or not to check the consistency 
+of an eventual the breaks */
 void Binder::visit(ForLoop &loop) {
   bool was_loop = is_loop_body;
   Loop * last_loop = current_loop;
   is_loop_body = (was_loop) ? true : false;
+
   push_scope();
   loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
   is_loop_body = true;
   current_loop = &loop;
   loop.get_body().accept(*this);
+
   is_loop_body = (was_loop) ? true : false;
   current_loop = last_loop;
   pop_scope();
 }
 
+/* Checks if we are in the loop body and assign a reference
+to the inner loop in the break */
 void Binder::visit(Break &b) {
   if (!is_loop_body)
     error(b.loc, " There is a break outside a loop");
   b.set_loop(current_loop);
 }
 
+/* Checks if we are trying to write a read only variable (a for index) 
+to raise and error. It checks for consistency of the indetifier and its redefinition */
 void Binder::visit(Assign &assign) {
   assign.get_lhs().accept(*this);
   if (assign.get_lhs().get_decl()->read_only)

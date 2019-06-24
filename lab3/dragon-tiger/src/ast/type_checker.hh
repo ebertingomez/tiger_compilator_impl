@@ -5,7 +5,11 @@
 
 namespace ast {
 namespace type_checker {
-
+/**
+ * @brief This class implements the visitor(type_checker) to check the type consistency
+ * of each node and assigns a type to every single node.
+ * 
+ */ 
 class TypeChecker : public ASTVisitor {
 
 public:
