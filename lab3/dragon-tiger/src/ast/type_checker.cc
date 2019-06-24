@@ -17,10 +17,13 @@ void TypeChecker::visit(IntegerLiteral &literal) {
   literal.set_type(t_int);
 }
 
+/* Sets the type of the StringLiteral to string */
 void TypeChecker::visit(StringLiteral &literal) {
   literal.set_type(t_string);
 }
 
+/* Checks for type consistency and sets the type of each expression of the
+sequence. Its type is the one of the last analyzed expression. Otherwise it is void */
 void TypeChecker::visit(Sequence &seq) {
   if (seq.get_exprs().size()>0){
     const auto exprs = seq.get_exprs();
@@ -34,6 +37,9 @@ void TypeChecker::visit(Sequence &seq) {
     seq.set_type(t_void);
 }
 
+/* Checks for type consistency of the different parts of the ifthenelse node.
+the condition has to be an int, and the then else parts must have the same type.
+The type of the node is the same of either the else or then part.*/
 void TypeChecker::visit(IfThenElse &ite) {
   ite.get_condition().accept(*this);
   ite.get_then_part().accept(*this);
@@ -47,6 +53,8 @@ void TypeChecker::visit(IfThenElse &ite) {
 
 }
 
+/* Checks for type consistency of each declaration and of the body. The type is the same
+as the sequence analyzed. */
 void TypeChecker::visit(Let &let) {
   for (auto decl : let.get_decls())
     decl->accept(*this);
@@ -54,6 +62,8 @@ void TypeChecker::visit(Let &let) {
   let.set_type(let.get_sequence().get_type());
 }
 
+/* Checks the type of the vardecl or inferes it in function of the expression.
+Checks for consitency between the explicit type (if any) and the expr type. */
 void TypeChecker::visit(VarDecl &decl) {
   Type type = t_undef;
   if (decl.get_expr()){
@@ -86,6 +96,7 @@ void TypeChecker::visit(VarDecl &decl) {
   }
 }
 
+/* Checks for consistency of the to members of the node according to the operator. */
 void TypeChecker::visit(BinaryOperator &binop) {
   Expr * left = &binop.get_left();
   Expr * right = &binop.get_right();
@@ -108,11 +119,16 @@ void TypeChecker::visit(BinaryOperator &binop) {
   }
 }
 
+/* Sets the type as being the same as its declaration */
 void TypeChecker::visit(Identifier &id) {
   if(!id.get_decl())
     error(id.loc, id.name.get()+": No declaration operand");
   id.set_type(id.get_decl()->get_type());
 }
+
+/* Sets the type of the funcDecl if it has not been done yet. Checks if there is an explicit 
+type and set it. Otherwise, it sets void as type. It checks the function body too. It checks
+if the explicit type correspond to the one of the body*/
 void TypeChecker::visit(FunDecl &decl) {
   if (decl.get_type() != t_undef)
     return;
@@ -153,6 +169,8 @@ void TypeChecker::visit(FunDecl &decl) {
     error(decl.loc, decl.name.get()+":  Type mismatch"); 
 }
 
+/* Checks for type consistency of the parameters of the function according to its definition.
+Its type is the same is its declaration. */
 void TypeChecker::visit(FunCall &call) {
   if(!call.get_decl())
     error(call.loc, call.func_name.get()+": No declaration in this call");
@@ -181,6 +199,8 @@ void TypeChecker::visit(FunCall &call) {
   }
 }
 
+/* Checks for type consistency of the loop elements. The condition has to be 
+int and the body void. The loop type is void*/
 void TypeChecker::visit(WhileLoop &loop) {
   loop.get_condition().accept(*this);
   loop.get_body().accept(*this);
@@ -192,6 +212,8 @@ void TypeChecker::visit(WhileLoop &loop) {
   loop.set_type(t_void);
 }
 
+/* Checks for type consistency of the loop elements. The variable and the high values
+have to be integers. The loop body and the loop have to be void */
 void TypeChecker::visit(ForLoop &loop) {
   loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
@@ -211,6 +233,8 @@ void TypeChecker::visit(Break &b) {
   b.set_type(t_void);
 }
 
+/* Checks for type consistency of the identifier and the expression of the assing. They
+have to be the same. The assign type is void */
 void TypeChecker::visit(Assign &assign) {
   assign.get_lhs().accept(*this);
   assign.get_rhs().accept(*this);

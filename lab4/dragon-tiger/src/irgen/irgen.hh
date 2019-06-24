@@ -95,20 +95,20 @@ public:
   // Those methods will return either nullptr when no
   // result is expected (a statement for example),
   // or the LLVM value when a result is meaningful.
-  virtual llvm::Value *visit(const IntegerLiteral &);
-  virtual llvm::Value *visit(const StringLiteral &);
-  virtual llvm::Value *visit(const BinaryOperator &);
+  virtual llvm::Value *visit(const IntegerLiteral &) override;
+  virtual llvm::Value *visit(const StringLiteral &) override;
+  virtual llvm::Value *visit(const BinaryOperator &) override;
   virtual llvm::Value *visit(const Sequence &);
-  virtual llvm::Value *visit(const Let &);
-  virtual llvm::Value *visit(const Identifier &);
-  virtual llvm::Value *visit(const IfThenElse &);
-  virtual llvm::Value *visit(const VarDecl &);
-  virtual llvm::Value *visit(const FunDecl &);
-  virtual llvm::Value *visit(const FunCall &);
-  virtual llvm::Value *visit(const WhileLoop &);
-  virtual llvm::Value *visit(const ForLoop &);
-  virtual llvm::Value *visit(const Break &);
-  virtual llvm::Value *visit(const Assign &);
+  virtual llvm::Value *visit(const Let &) override;
+  virtual llvm::Value *visit(const Identifier &) override;
+  virtual llvm::Value *visit(const IfThenElse &) override;
+  virtual llvm::Value *visit(const VarDecl &) override;
+  virtual llvm::Value *visit(const FunDecl &) override;
+  virtual llvm::Value *visit(const FunCall &) override;
+  virtual llvm::Value *visit(const WhileLoop &) override;
+  virtual llvm::Value *visit(const ForLoop &) override;
+  virtual llvm::Value *visit(const Break &) override;
+  virtual llvm::Value *visit(const Assign &) override;
 };
 
 } // namespace irgen

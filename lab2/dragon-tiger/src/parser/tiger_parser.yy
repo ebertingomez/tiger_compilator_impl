@@ -77,7 +77,7 @@ using utils::nl;
   UMINUS "uminus"
 ;
 
-// Define tokens that have an associated value, such as identifiers or strings
+// Define tokens that have an associated value, such as integers, identifiers or strings
 %token <int> INT "integer"
 %token <Symbol> ID "id"
 %token <Symbol> STRING "string"
@@ -106,11 +106,10 @@ using utils::nl;
 %nonassoc FUNCTION VAR TYPE DO OF ASSIGN;
 %left OR;
 %left AND;
-%left EQ NEQ GT LT GE LE;
+%nonassoc EQ NEQ GT LT GE LE;
 %left PLUS MINUS;
 %left TIMES DIVIDE;
 %left UMINUS;
-%left LPAREN RPAREN;
 
 
 // Declare grammar rules and production actions

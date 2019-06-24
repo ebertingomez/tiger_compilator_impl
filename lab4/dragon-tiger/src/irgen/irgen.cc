@@ -128,7 +128,7 @@ void IRGenerator::generate_function(const FunDecl &decl) {
   llvm::verifyFunction(*current_function);
   
 }
-
+/* Generate a frame after corresponding to a function declaration */
 void IRGenerator::generate_frame(){
   std::vector<llvm::Type *> types;
   // If the current function has a parent, the push the his frame onto the first field of the frame
@@ -149,6 +149,7 @@ void IRGenerator::generate_frame(){
   
 }
 
+/* Goes up frames following the static link (first argument of the structure) */
 std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   const FunDecl * fun = current_function_decl;
   llvm::Value * sl = frame;
@@ -165,6 +166,8 @@ std::pair<llvm::StructType *, llvm::Value *> IRGenerator::frame_up(int levels){
   return std::pair<llvm::StructType *, llvm::Value *>(frame_type[fun],sl);
 }
 
+/* Generate a variable depending. If it escapes, it stores in the frame structure. 
+Otherwise it is allocated.  */
 llvm::Value * IRGenerator::generate_vardecl(const VarDecl &decl){
   llvm::Value * pointer;
   // If the function escapes, we store it in the frame after computing
