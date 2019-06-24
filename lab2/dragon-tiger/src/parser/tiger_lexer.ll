@@ -24,7 +24,6 @@ static std::string string_buffer;
 lineterminator  \r|\n|\r\n
 blank           [ \t\f]
 id              [a-zA-Z][_0-9a-zA-Z]*
-// RE to reject leading zeroes and accept other numbers
 integer         0{1}|[1-9][0-9]* 
 
 
