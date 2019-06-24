@@ -8,7 +8,12 @@
 
 namespace ast {
 namespace binder {
-
+/**
+ * @brief This class implements the visitor(binder) to bind the identifiers and
+ * function calls to their declarations. It checks the consistency of definitions.
+ * For instance, using a non declarated variable or function,etc.
+ * 
+ */
 typedef std::unordered_map<Symbol, Decl *> scope_t;
 
 class Binder : public ASTVisitor {
@@ -27,20 +32,20 @@ class Binder : public ASTVisitor {
 public:
   Binder();
   FunDecl *analyze_program(Expr &);
-  virtual void visit(IntegerLiteral &);
-  virtual void visit(StringLiteral &);
-  virtual void visit(BinaryOperator &);
-  virtual void visit(Sequence &);
-  virtual void visit(Let &);
-  virtual void visit(Identifier &);
-  virtual void visit(IfThenElse &);
-  virtual void visit(VarDecl &);
-  virtual void visit(FunDecl &);
-  virtual void visit(FunCall &);
-  virtual void visit(WhileLoop &);
-  virtual void visit(ForLoop &);
-  virtual void visit(Break &);
-  virtual void visit(Assign &);
+  virtual void visit(IntegerLiteral &) override;
+  virtual void visit(StringLiteral &) override;
+  virtual void visit(BinaryOperator &) override;
+  virtual void visit(Sequence &) override;
+  virtual void visit(Let &) override;
+  virtual void visit(Identifier &) override;
+  virtual void visit(IfThenElse &) override;
+  virtual void visit(VarDecl &) override;
+  virtual void visit(FunDecl &) override;
+  virtual void visit(FunCall &) override;
+  virtual void visit(WhileLoop &) override;
+  virtual void visit(ForLoop &) override;
+  virtual void visit(Break &) override;
+  virtual void visit(Assign &) override;
 };
 
 } // namespace binder

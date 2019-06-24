@@ -8,7 +8,7 @@ using utils::error;
 using utils::non_fatal_error;
 
 /* Variables to handle loop break */
-static std::vector<Loop *> loops; 
+static Loop * current_loop = nullptr; 
 static bool is_loop_body=false;
 
 namespace ast {
@@ -124,17 +124,20 @@ void Binder::visit(IntegerLiteral &literal) {
 void Binder::visit(StringLiteral &literal) {
 }
 
+/* Analyzes both members of the operator to check consistency */
 void Binder::visit(BinaryOperator &op) {
   op.get_left().accept(*this);
   op.get_right().accept(*this);
 }
 
+/* Analyzes a sequence of expression to check consistency */
 void Binder::visit(Sequence &seq) {
   const auto exprs = seq.get_exprs();
   for (auto expr : exprs) {
     expr->accept(*this);
   }
 }
+
 
 void Binder::visit(Let &let) {
   bool was_loop = is_loop_body;
@@ -225,33 +228,35 @@ void Binder::visit(FunCall &call) {
 
 void Binder::visit(WhileLoop &loop) {
   bool was_loop = is_loop_body;
+  Loop * last_loop = current_loop;
   is_loop_body = (was_loop) ? true : false;
   loop.get_condition().accept(*this);
-  loops.push_back(&loop);
+  current_loop = &loop;
   is_loop_body = true;
   loop.get_body().accept(*this);
   is_loop_body = (was_loop) ? true : false;
-  loops.pop_back();
+  current_loop = last_loop;
 }
 
 void Binder::visit(ForLoop &loop) {
   bool was_loop = is_loop_body;
+  Loop * last_loop = current_loop;
   is_loop_body = (was_loop) ? true : false;
   push_scope();
   loop.get_variable().accept(*this);
   loop.get_high().accept(*this);
   is_loop_body = true;
-  loops.push_back(&loop);
+  current_loop = &loop;
   loop.get_body().accept(*this);
   is_loop_body = (was_loop) ? true : false;
-  loops.pop_back();
+  current_loop = last_loop;
   pop_scope();
 }
 
 void Binder::visit(Break &b) {
   if (!is_loop_body)
     error(b.loc, " There is a break outside a loop");
-  b.set_loop(loops.back());
+  b.set_loop(current_loop);
 }
 
 void Binder::visit(Assign &assign) {

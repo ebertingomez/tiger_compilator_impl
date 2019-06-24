@@ -45,7 +45,7 @@ int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
 }
 
 /* Evaluates each element of the sequence and return the last value of the sequence
-if the sequence is empty, it raises and error */
+. If it is empty or there is an empty expression in the sequence, it raises and error */
 int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
 
     if (seqExpr.get_exprs().size() > 0) {
