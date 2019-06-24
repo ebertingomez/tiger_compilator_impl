@@ -57,6 +57,7 @@ llvm::Value *IRGenerator::visit(const BinaryOperator &op) {
 
 llvm::Value *IRGenerator::visit(const Sequence &seq) {
   llvm::Value *result = nullptr;
+
   for (auto expr : seq.get_exprs())
     result = expr->accept(*this);
   // An empty sequence should return () but the result
@@ -91,14 +92,18 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
   llvm::Value * value;
   Builder.SetInsertPoint(if_then);
   value = ite.get_then_part().accept(*this);
+
   if (ite.get_type()!=t_void)
     Builder.CreateStore(value, pointer);
+
   Builder.CreateBr(if_end);
 
   Builder.SetInsertPoint(if_else);
   value = ite.get_else_part().accept(*this);
+
   if (ite.get_type()!=t_void)
     Builder.CreateStore(value, pointer);
+
   Builder.CreateBr(if_end);
   
   // To the end ifthenelse segment after executing the precedent blocks
@@ -113,6 +118,7 @@ llvm::Value *IRGenerator::visit(const IfThenElse &ite) {
 llvm::Value *IRGenerator::visit(const VarDecl &decl) {
   llvm::Value * pointer = generate_vardecl(decl);
   llvm::Value * value = decl.get_expr()->accept(*this);
+
   if (value != nullptr)
     Builder.CreateStore(value,pointer);
   return nullptr;
@@ -218,11 +224,12 @@ llvm::Value *IRGenerator::visit(const WhileLoop &loop) {
 
 llvm::Value *IRGenerator::visit(const ForLoop &loop) {
   llvm::BasicBlock *const test_block =
-      llvm::BasicBlock::Create(Context, "loop_test", current_function);
+          llvm::BasicBlock::Create(Context, "loop_test", current_function);
   llvm::BasicBlock *const body_block =
-      llvm::BasicBlock::Create(Context, "loop_body", current_function);
+          llvm::BasicBlock::Create(Context, "loop_body", current_function);
   llvm::BasicBlock *const end_block =
-      llvm::BasicBlock::Create(Context, "loop_end", current_function);
+          llvm::BasicBlock::Create(Context, "loop_end", current_function);
+
   llvm::Value *const index = loop.get_variable().accept(*this);
   llvm::Value *const high = loop.get_high().accept(*this);
   Builder.CreateBr(test_block);
@@ -234,6 +241,7 @@ llvm::Value *IRGenerator::visit(const ForLoop &loop) {
 
   Builder.SetInsertPoint(body_block);
   loop.get_body().accept(*this);
+  
   Builder.CreateStore(
       Builder.CreateAdd(Builder.CreateLoad(index), Builder.getInt32(1)), index);
   Builder.CreateBr(test_block);

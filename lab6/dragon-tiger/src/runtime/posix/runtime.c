@@ -45,6 +45,7 @@ const char *__getchar(void) {
 
 int32_t __ord(const char *s) {
   unsigned char a = s[0];
+
   if (s[0] == '\0')
     return -1;
   return a;
@@ -66,11 +67,13 @@ const char *__chr(int32_t i) {
       s[1] = '\0';
     }
   }
+
   return s;
 }
 
 int32_t __size(const char *s) {
   int size = 0;
+
   while (s[size] != '\0')
     size++;
   return size;
@@ -113,6 +116,7 @@ const char *__concat(const char *s1, const char *s2) {
 
 int32_t __strcmp(const char *s1, const char *s2) {
   int cmp = strcmp(s1,s2);
+  
   if (cmp == 0)
     return 0;
   else {
