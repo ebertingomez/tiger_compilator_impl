@@ -6,7 +6,11 @@
 #include "nodes.hh"
 
 namespace ast {
-
+/**
+ * @brief Implementation of a visitor to evaluate an AST. It determines
+ *        the numerical value of it if possible. Otherwise, it raises an error
+ * 
+ */
 class ASTEvaluator : public ConstASTIntVisitor {
   std::ostream *ostream;
   bool verbose;

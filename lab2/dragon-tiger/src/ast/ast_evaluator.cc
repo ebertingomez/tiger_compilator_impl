@@ -3,6 +3,7 @@
 
 namespace ast {
 
+/* Evaluates an Integer, returns its value */
 int32_t ASTEvaluator::visit(const IntegerLiteral &literal) {
     return literal.value;
 }
@@ -12,7 +13,10 @@ int32_t ASTEvaluator::visit(const StringLiteral &literal) {
     return 0;
 }
 
+/* Evaluates both members of the operator and computes the result in function
+of the operator */
 int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
+
     if (operator_name[binop.op]=="+")
         return binop.get_left().accept(*this) + binop.get_right().accept(*this);
     else if (operator_name[binop.op]=="-") 
@@ -40,13 +44,18 @@ int32_t ASTEvaluator::visit(const BinaryOperator &binop) {
     return 0;
 }
 
+/* Evaluates each element of the sequence and return the last value of the sequence
+if the sequence is empty, it raises and error */
 int32_t ASTEvaluator::visit(const Sequence &seqExpr) {
+
     if (seqExpr.get_exprs().size() > 0) {
         const auto exprs = seqExpr.get_exprs();
+
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
             if (*expr == NULL)
                 utils::error("Early error in the sequence");
         }
+
         Expr * e;
         for (auto expr = exprs.cbegin(); expr != exprs.cend(); expr++) {
             (*expr)->accept(*this);
@@ -69,12 +78,16 @@ int32_t ASTEvaluator::visit(const Identifier &id) {
     return 0;
 }
 
+/* Evaluates the condition and analyzes either the then branch or the else one 
+accordingly. Return the result of the branch */
 int32_t ASTEvaluator::visit(const IfThenElse &ite) {
+
     if (ite.get_condition().accept(*this))
         return ite.get_then_part().accept(*this);
     else {
         const Expr * expr = &ite.get_else_part();
         Sequence * seq = (Sequence *)expr;
+
         if (seq->get_exprs().size() > 0)
             return ite.get_else_part().accept(*this);
         else
